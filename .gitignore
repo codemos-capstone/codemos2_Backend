@@ -1,0 +1,43 @@
+# Gradle files
+gradle/
+build/classes
+build/resources
+build/tmp
+build
+
+.gradle/
+# Build output directories
+target/
+out/
+./build/**
+
+# Ignore Gradle GUI config
+gradle-app.setting
+
+# Avoid ignoring Gradle wrapper jar file (.jar files are usually ignored)
+!gradle/wrapper/gradle-wrapper.jar
+
+# IDEs and editors
+.idea/
+*.iml
+*.ipr
+*.iws
+.classpath
+.project
+.settings/
+*.sublime-workspace
+
+# Mac OS file system
+.DS_Store
+
+# Log files
+*.log
+
+# Java specific
+.hs_err_pid*
+
+# Ignore Spring Boot specific files
+spring.log
+
+# application.properties도 필요시 추가
+src/main/resource/application.properties

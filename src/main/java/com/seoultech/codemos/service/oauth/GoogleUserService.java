@@ -3,6 +3,7 @@ package com.seoultech.codemos.service.oauth;
 
 import com.seoultech.codemos.dto.TokenDto;
 import com.seoultech.codemos.jwt.TokenProvider;
+import com.seoultech.codemos.model.Authority;
 import com.seoultech.codemos.model.UserEntity;
 import com.seoultech.codemos.repository.UserRepository;
 
@@ -36,9 +37,8 @@ public class GoogleUserService {
                 .orElseGet(UserEntity::new);
         userEntity.setEmail(email);
         userEntity.setNickname(name);
-        SimpleGrantedAuthority authorities =new SimpleGrantedAuthority("ROLE_USER");
+        Authority authorities = Authority.ROLE_USER;
         userEntity.setAuthority(authorities);
-
         return userRepository.save(userEntity);
     }
 }

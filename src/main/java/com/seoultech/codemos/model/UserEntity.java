@@ -24,9 +24,9 @@ public class UserEntity {
     private String password;
     private String nickname;
     private String profilePicURL;
-    private SimpleGrantedAuthority authority;
+    private Authority authority;
     @Builder
-    public UserEntity(Long id, String email, String password, String nickname) {
+    public UserEntity(Long id, String email, String password, String nickname, Authority authority) {
         this.id = id;
         this.email = email;
         this.password = password;
