@@ -1,4 +1,4 @@
-package com.seoultech.codemos.Config;
+package com.seoultech.codemos.config;
 
 import com.seoultech.codemos.jwt.TokenProvider;
 import lombok.RequiredArgsConstructor;
