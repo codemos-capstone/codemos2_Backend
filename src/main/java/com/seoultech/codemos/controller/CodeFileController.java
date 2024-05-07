@@ -41,5 +41,11 @@ public class CodeFileController {
         return ResponseEntity.ok(responseDtoList);
     }
 
+    @GetMapping("/{fileId}")
+//    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<CodeFileResponseDto> getCodeFileDetails(@PathVariable String fileId) {
+        CodeFileResponseDto responseDto = codeFileService.getCodeFileDetails(fileId);
+        return ResponseEntity.ok(responseDto);
+    }
 
 }
