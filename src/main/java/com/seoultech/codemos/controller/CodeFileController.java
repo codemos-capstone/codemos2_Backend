@@ -55,4 +55,11 @@ public class CodeFileController {
         return ResponseEntity.ok(responseDto);
     }
 
+    @DeleteMapping("/{fileId}")
+//    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<Void> deleteCodeFile(@PathVariable String fileId) {
+        codeFileService.deleteCodeFile(fileId);
+        return ResponseEntity.noContent().build();
+    }
+
 }
