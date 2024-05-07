@@ -11,21 +11,12 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 
 @Getter
-@AllArgsConstructor
-@NoArgsConstructor
-@Builder
-public class UserRequestDTO {
+public class LoginRequestDTO {
     private String email;
     private String password;
-    private String nickname;
-
-    public UserEntity toUser(PasswordEncoder passwordEncoder) {
-        return UserEntity.builder()
-                .email(email)
-                .password(passwordEncoder.encode(password))
-                .nickname(nickname)
-                .authority(Authority.ROLE_USER)
-                .build();
+    public UsernamePasswordAuthenticationToken toAuthentication() {
+        return new UsernamePasswordAuthenticationToken(email, password);
     }
+
 
 }

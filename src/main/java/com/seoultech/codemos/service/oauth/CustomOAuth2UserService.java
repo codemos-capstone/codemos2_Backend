@@ -34,24 +34,28 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
-        OAuth2User oAuth2User;
+        if (userRequest == null) {
+            throw new IllegalArgumentException("OAuth2UserRequest cannot be null");
+        }
 
+        OAuth2User oAuth2User;
         try {
             oAuth2User = super.loadUser(userRequest);
             if (oAuth2User == null) {
-                throw new OAuth2AuthenticationException("OAuth2User is null after loadUser call.");
+                throw new OAuth2AuthenticationException("Failed to load user from OAuth2 provider");
             }
             return processOAuth2User(userRequest, oAuth2User);
         } catch (OAuth2AuthenticationException e) {
-            System.out.println("OAuth2AutheticationException");
-            System.out.println(e);
+            // More detailed error logging
+            System.out.println("OAuth2AuthenticationException: " + e.toString());
             throw e;
         } catch (Exception ex) {
-            System.out.println("Exception");
-            System.out.println(ex);
+            // More detailed error logging
+            System.out.println("Exception occurred: " + ex.toString());
             throw new OAuth2AuthenticationException(String.valueOf(ex));
         }
     }
+
 
     private OAuth2User processOAuth2User(OAuth2UserRequest userRequest, OAuth2User oAuth2User) {
         String email = oAuth2User.getAttribute("email");
@@ -63,20 +67,16 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         if (!userOptional.isPresent()) {
             // 사용자 등록 로직
             user = googleUserService.registerOrUpdateGoogleUser(email, name);
-            System.out.println("새 유저 생성 로직으로");
+
         } else {
             user = userOptional.get();
             System.out.println("이미 있는 유저, JWT 토큰 발급 로직 여기서");
         }
 
-        System.out.println("!1");
         List<GrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"));
 
-
-        System.out.println("!2");
         OAuth2AuthenticationToken authToken = new OAuth2AuthenticationToken(oAuth2User, authorities, userRequest.getClientRegistration().getRegistrationId());
 
-        System.out.println("!3");
         TokenDto tokenDto = tokenProvider.generateTokenDto(authToken);
         System.out.println("Generated JWT: " + tokenDto.getAccessToken());
 

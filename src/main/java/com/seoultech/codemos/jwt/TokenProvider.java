@@ -1,9 +1,6 @@
 package com.seoultech.codemos.jwt;
 
-
-
 import com.seoultech.codemos.dto.TokenDto;
-
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -36,7 +33,6 @@ public class TokenProvider {
 
 
     public TokenDto generateTokenDto(Authentication authentication) {
-        System.out.println("!generateTOkenDto");
         String authorities = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));
@@ -44,7 +40,6 @@ public class TokenProvider {
         long now = (new Date()).getTime();
         Date tokenExpiresIn = new Date(now + ACCESS_TOKEN_EXPIRE_TIME);
 
-        System.out.println("!generateTOkenDto"+tokenExpiresIn);
 
 
         String subject;
