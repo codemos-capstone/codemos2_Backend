@@ -18,8 +18,8 @@ public class JudgeService {
     private final RestTemplate restTemplate;
     private static final String url = "https://distinctive-odele-codemos.koyeb.app/score";
 
-    public JudgeResultResponseDTO judgeCode(String code) {
-        System.out.println("code = " + code);
+    public JudgeResultResponseDTO judgeCode(Integer problemId, String code) {
+//        System.out.println("code = " + code);
         Map<String, String> requestBody = new HashMap<>();
         requestBody.put("code", code);
 
