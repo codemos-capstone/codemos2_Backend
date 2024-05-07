@@ -1,6 +1,5 @@
-package com.seoultech.codemos.Config;
+package com.seoultech.codemos.config;
 
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 

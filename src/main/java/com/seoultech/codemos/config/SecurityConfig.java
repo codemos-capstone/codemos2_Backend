@@ -1,8 +1,7 @@
-package com.seoultech.codemos.Config;
+package com.seoultech.codemos.config;
 
 import com.seoultech.codemos.dto.TokenDto;
 import com.seoultech.codemos.jwt.TokenProvider;
-import com.seoultech.codemos.service.oauth.CustomOAuth2UserService;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 
@@ -45,6 +44,8 @@ public class SecurityConfig {
                 authorize -> authorize
                         .requestMatchers("/home/home").permitAll()
                         .requestMatchers("/login/**").permitAll()
+                        .requestMatchers("/api/v1/code-file/**").permitAll()
+                        .requestMatchers("/api/v1/judge/**").permitAll()
                         .anyRequest().authenticated()
         );
         http.oauth2Login(oauth2 -> oauth2
