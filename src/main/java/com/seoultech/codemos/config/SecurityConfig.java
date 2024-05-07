@@ -1,8 +1,7 @@
-package com.seoultech.codemos.Config;
+package com.seoultech.codemos.config;
 
 import com.seoultech.codemos.dto.TokenDto;
 import com.seoultech.codemos.jwt.TokenProvider;
-import com.seoultech.codemos.service.oauth.CustomOAuth2UserService;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 
