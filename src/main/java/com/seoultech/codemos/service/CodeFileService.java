@@ -24,6 +24,7 @@ public class CodeFileService {
                 .name(requestDto.getName())
                 .content(requestDto.getContent())
                 .language(requestDto.getLanguage())
+                .createdAt(requestDto.getCreatedAt())
                 .userId(userId)
                 .build();
         CodeFile savedCodeFile = codeFileRepository.save(codeFile);
@@ -50,6 +51,7 @@ public class CodeFileService {
         CodeFile codeFile = codeFileRepository.findByIdAndUserId(fileId, userId)
                 .orElseThrow(() -> new RuntimeException("Code file not found"));
         codeFile.setContent(requestDto.getContent());
+        codeFile.setUpdatedAt(requestDto.getUpdatedAt());
         CodeFile updatedCodeFile = codeFileRepository.save(codeFile);
         return mapToResponseDto(updatedCodeFile);
     }

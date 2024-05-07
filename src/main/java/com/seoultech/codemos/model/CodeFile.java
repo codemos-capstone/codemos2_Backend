@@ -20,9 +20,11 @@ public class CodeFile {
     private String name;
     private String content;
     private String language;
-    @CreatedDate
-    private LocalDateTime createdAt;
-    @LastModifiedDate
-    private LocalDateTime updatedAt;
+//    @CreatedDate
+//    private LocalDateTime createdAt;
+//    @LastModifiedDate
+//    private LocalDateTime updatedAt;
+    private String createdAt;
+    private String updatedAt;
     private String userId;
 }

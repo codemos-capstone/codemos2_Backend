@@ -13,4 +13,6 @@ public class CodeFileRequestDto {
     private String name;
     private String content;
     private String language;
+    private String CreatedAt;
+    private String UpdatedAt;
 }

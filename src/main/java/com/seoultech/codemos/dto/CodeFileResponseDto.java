@@ -16,7 +16,9 @@ public class CodeFileResponseDto {
     private String name;
     private String content;
     private String language;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
+//    private LocalDateTime createdAt;
+//    private LocalDateTime updatedAt;
+    private String createdAt;
+    private String updatedAt;
     private String userId;
 }
