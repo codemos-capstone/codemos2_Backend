@@ -62,4 +62,18 @@ public class CodeFileController {
         return ResponseEntity.noContent().build();
     }
 
+    @PostMapping("/{fileId}/execute")
+//    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<JudgeResultResponseDTO> executeCodeFile(@PathVariable String fileId) {
+        CodeFileResponseDto codeFileResponseDto = codeFileService.getCodeFileDetails(fileId);
+        String code = codeFileResponseDto.getContent();
+
+        JudgeResultResponseDTO judgeResult = judgeService.judgeCode(code);
+
+        if (judgeResult != null) {
+            return ResponseEntity.ok(judgeResult);
+        } else {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
 }
