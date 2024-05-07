@@ -48,4 +48,11 @@ public class CodeFileController {
         return ResponseEntity.ok(responseDto);
     }
 
+    @PutMapping("/{fileId}")
+//    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<CodeFileResponseDto> updateCodeFile(@PathVariable String fileId, @RequestBody CodeFileRequestDto requestDto) {
+        CodeFileResponseDto responseDto = codeFileService.updateCodeFile(fileId, requestDto);
+        return ResponseEntity.ok(responseDto);
+    }
+
 }
