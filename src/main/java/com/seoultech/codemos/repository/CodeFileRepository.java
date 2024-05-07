@@ -11,4 +11,5 @@ import java.util.Optional;
 public interface CodeFileRepository extends MongoRepository<CodeFile, String> {
     List<CodeFile> findByUserId(String userId);
     Optional<CodeFile> findByIdAndUserId(String id, String userId);
+    List<CodeFile> findByUserIdAndProblemId(String userId, Integer problemId);
 }

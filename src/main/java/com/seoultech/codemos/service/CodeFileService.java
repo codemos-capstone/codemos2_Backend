@@ -21,6 +21,7 @@ public class CodeFileService {
     public CodeFileResponseDto createCodeFile(CodeFileRequestDto requestDto) {
         String userId = SecurityContextHolder.getContext().getAuthentication().getName();
         CodeFile codeFile = CodeFile.builder()
+                .problemId(requestDto.getProblemId())
                 .name(requestDto.getName())
                 .content(requestDto.getContent())
                 .language(requestDto.getLanguage())
@@ -34,6 +35,14 @@ public class CodeFileService {
     public List<CodeFileResponseDto> getCodeFileList() {
         String userId = SecurityContextHolder.getContext().getAuthentication().getName();
         List<CodeFile> codeFiles = codeFileRepository.findByUserId(userId);
+        return codeFiles.stream()
+                .map(this::mapToResponseDto)
+                .collect(Collectors.toList());
+    }
+
+    public List<CodeFileResponseDto> getProblemCodeFileList(Integer problemId) {
+        String userId = SecurityContextHolder.getContext().getAuthentication().getName();
+        List<CodeFile> codeFiles = codeFileRepository.findByUserIdAndProblemId(userId, problemId);
         return codeFiles.stream()
                 .map(this::mapToResponseDto)
                 .collect(Collectors.toList());
@@ -66,6 +75,7 @@ public class CodeFileService {
     private CodeFileResponseDto mapToResponseDto(CodeFile codeFile) {
         return new CodeFileResponseDto(
                 codeFile.getId(),
+                codeFile.getProblemId(),
                 codeFile.getName(),
                 codeFile.getContent(),
                 codeFile.getLanguage(),

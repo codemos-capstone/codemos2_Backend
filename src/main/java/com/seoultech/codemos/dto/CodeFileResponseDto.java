@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class CodeFileResponseDto {
     private String id;
+    private Integer problemId;
     private String name;
     private String content;
     private String language;

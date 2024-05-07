@@ -17,6 +17,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class CodeFile {
     @Id
     private String id;
+    private Integer problemId;
     private String name;
     private String content;
     private String language;

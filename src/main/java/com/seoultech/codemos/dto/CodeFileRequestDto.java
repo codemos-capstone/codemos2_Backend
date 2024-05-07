@@ -10,6 +10,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CodeFileRequestDto {
+    private Integer problemId;
     private String name;
     private String content;
     private String language;

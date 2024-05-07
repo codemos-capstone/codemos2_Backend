@@ -41,6 +41,13 @@ public class CodeFileController {
         return ResponseEntity.ok(responseDtoList);
     }
 
+    @GetMapping("/problem/{problemId}")
+//    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<List<CodeFileResponseDto>> getProblemCodeFileList(@PathVariable Integer problemId) {
+        List<CodeFileResponseDto> responseDtoList = codeFileService.getProblemCodeFileList(problemId);
+        return ResponseEntity.ok(responseDtoList);
+    }
+
     @GetMapping("/{fileId}")
 //    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<CodeFileResponseDto> getCodeFileDetails(@PathVariable String fileId) {
@@ -62,13 +69,13 @@ public class CodeFileController {
         return ResponseEntity.noContent().build();
     }
 
-    @PostMapping("/{fileId}/execute")
+    @PostMapping("/problem/{problemId}/{fileId}/execute")
 //    @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<JudgeResultResponseDTO> executeCodeFile(@PathVariable String fileId) {
+    public ResponseEntity<JudgeResultResponseDTO> executeCodeFile(@PathVariable Integer problemId, @PathVariable String fileId) {
         CodeFileResponseDto codeFileResponseDto = codeFileService.getCodeFileDetails(fileId);
         String code = codeFileResponseDto.getContent();
 
-        JudgeResultResponseDTO judgeResult = judgeService.judgeCode(code);
+        JudgeResultResponseDTO judgeResult = judgeService.judgeCode(problemId, code);
 
         if (judgeResult != null) {
             return ResponseEntity.ok(judgeResult);
