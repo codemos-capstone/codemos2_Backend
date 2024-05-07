@@ -44,6 +44,8 @@ public class SecurityConfig {
                 authorize -> authorize
                         .requestMatchers("/home/home").permitAll()
                         .requestMatchers("/login/**").permitAll()
+                        .requestMatchers("/api/v1/code-file/**").permitAll()
+                        .requestMatchers("/api/v1/judge/**").permitAll()
                         .anyRequest().authenticated()
         );
         http.oauth2Login(oauth2 -> oauth2
