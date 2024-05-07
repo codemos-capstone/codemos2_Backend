@@ -1,14 +1,19 @@
 package com.seoultech.codemos.controller;
 
+import com.seoultech.codemos.dto.LoginRequestDTO;
 import com.seoultech.codemos.dto.TokenDto;
 import com.seoultech.codemos.dto.UserRequestDTO;
 import com.seoultech.codemos.dto.UserResponseDTO;
 import com.seoultech.codemos.jwt.TokenProvider;
 import com.seoultech.codemos.service.AuthService;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.view.RedirectView;
+
+import java.io.IOException;
 
 @RestController
 @RequestMapping("/auth")
@@ -16,10 +21,14 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
     private final AuthService authService;
     private final TokenProvider tokenProvider;
-
     @PostMapping("/sign")
-    public ResponseEntity<UserResponseDTO> CreateUserInfo(@RequestBody UserRequestDTO requestDto) {
-        return ResponseEntity.ok(authService.signup(requestDto));
+    public ResponseEntity<?>  CreateUserInfo(@RequestBody UserRequestDTO requestDto) {
+        try {
+            UserResponseDTO responseDto = authService.signup(requestDto);
+            return ResponseEntity.ok(responseDto);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
     @DeleteMapping("/sign")
     public void deleteUserInfo(){}
@@ -30,9 +39,12 @@ public class AuthController {
     @GetMapping("/findLoginId")
     public void FindLoginId(){}
     @PostMapping("/login")
-    public ResponseEntity<TokenDto> login(@RequestBody UserRequestDTO requestDto) {
+    public ResponseEntity<TokenDto> login(@RequestBody LoginRequestDTO requestDto) {
+
         return ResponseEntity.ok(authService.login(requestDto));
     }
+
+
 
     @GetMapping("/verify-token")
     public ResponseEntity<?> verifyToken(@RequestHeader(value="Authorization") String bearerToken) {
@@ -45,10 +57,4 @@ public class AuthController {
         }
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid token.");
     }
-
-    /*@GetMapping("/google")
-    public void getTokenWithAuthCode(@RequestParam String code) throws Exception {
-        System.out.println("AuthCode: "+code);
-        googleLoginService.getGoogleToken(code);
-    }*/
 }

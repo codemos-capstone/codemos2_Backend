@@ -14,6 +14,7 @@ import lombok.NoArgsConstructor;
 public class UserResponseDTO {
     private String email;
     private String nickname;
+    private boolean state;
 
     public static UserResponseDTO of(UserEntity user) {
         return UserResponseDTO.builder()

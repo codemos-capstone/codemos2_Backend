@@ -6,7 +6,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +23,8 @@ public class UserEntity {
     private String password;
     private String nickname;
     private String profilePicURL;
+
+    @Enumerated(EnumType.STRING)  // 이 부분을 추가하여 enum을 문자열로 데이터베이스에 저장
     private Authority authority;
     @Builder
     public UserEntity(Long id, String email, String password, String nickname, Authority authority) {
@@ -31,6 +32,7 @@ public class UserEntity {
         this.email = email;
         this.password = password;
         this.nickname = nickname;
+        this.authority =authority;
     }
 
     public UserEntity(String loginId, String password, String nickname, String profilePicURL){

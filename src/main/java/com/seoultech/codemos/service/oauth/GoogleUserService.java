@@ -23,21 +23,17 @@ import java.util.List;
 public class GoogleUserService {
 
     private final UserRepository userRepository;
-
-
     @Autowired
     public GoogleUserService(UserRepository userRepository) {
         this.userRepository = userRepository;
-
     }
-
     public UserEntity registerOrUpdateGoogleUser(String email, String name) {
-        System.out.println("registerOrUpdateGoogleUser");
         UserEntity userEntity = userRepository.findByEmail(email)
                 .orElseGet(UserEntity::new);
         userEntity.setEmail(email);
         userEntity.setNickname(name);
         Authority authorities = Authority.ROLE_USER;
+        System.out.println("adfaasdfadsds");
         userEntity.setAuthority(authorities);
         return userRepository.save(userEntity);
     }

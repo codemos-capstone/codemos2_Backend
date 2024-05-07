@@ -7,7 +7,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class LoginResponse {
+public class LoginResponseDTO {
     private Boolean success;
     private String message;
 }
