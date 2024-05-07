@@ -1,6 +1,6 @@
 package com.seoultech.codemos.service;
 
-import com.seoultech.codemos.Config.SecurityUtil;
+import com.seoultech.codemos.config.SecurityUtil;
 import com.seoultech.codemos.dto.MypageResponseDTO;
 import com.seoultech.codemos.dto.UserResponseDTO;
 import com.seoultech.codemos.model.LeaderBoardEntity;
