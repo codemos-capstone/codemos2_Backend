@@ -16,6 +16,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.stereotype.Component;
 
 
@@ -62,8 +63,8 @@ public class SecurityConfig {
                         .requestMatchers("/auth/**").permitAll()
                         .requestMatchers("/auth/sign").permitAll()
                         .requestMatchers("/auth/login").permitAll()
-                        .requestMatchers("/api/v1/code-file/**").permitAll()
-                        .requestMatchers("/api/v1/judge/**").permitAll()
+//                        .requestMatchers("/api/v1/code-file/**").permitAll()
+//                        .requestMatchers("/api/v1/judge/**").permitAll()
                         .anyRequest().authenticated()
         );
 
@@ -73,6 +74,10 @@ public class SecurityConfig {
                     response.sendRedirect("/google/loginFailure"); // 실패 시 이동할 경로
                 })
         );
+
+        // JWT 필터 추가
+        JwtFilter jwtFilter = new JwtFilter(tokenProvider);
+        http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
