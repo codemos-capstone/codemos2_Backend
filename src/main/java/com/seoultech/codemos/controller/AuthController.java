@@ -1,19 +1,13 @@
 package com.seoultech.codemos.controller;
 
-import com.seoultech.codemos.dto.LoginRequestDTO;
-import com.seoultech.codemos.dto.TokenDto;
-import com.seoultech.codemos.dto.UserRequestDTO;
-import com.seoultech.codemos.dto.UserResponseDTO;
+import com.seoultech.codemos.dto.*;
 import com.seoultech.codemos.jwt.TokenProvider;
 import com.seoultech.codemos.service.AuthService;
-import jakarta.servlet.http.HttpServletResponse;
+import com.seoultech.codemos.service.EmailService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.view.RedirectView;
-
-import java.io.IOException;
 
 @RestController
 @RequestMapping("/auth")
@@ -21,6 +15,7 @@ import java.io.IOException;
 public class AuthController {
     private final AuthService authService;
     private final TokenProvider tokenProvider;
+    private final EmailService emailService;
     @PostMapping("/sign")
     public ResponseEntity<?>  CreateUserInfo(@RequestBody UserRequestDTO requestDto) {
         try {
@@ -34,10 +29,16 @@ public class AuthController {
     public void deleteUserInfo(){}
     @PutMapping("/sign")
     public void updateUserInfo(){}
-    @PostMapping("/changepwd")
-    public void changePwd(){}
-    @GetMapping("/findLoginId")
-    public void FindLoginId(){}
+    @PostMapping("/change-pwd")
+    public ResponseEntity changePwd(@RequestParam(name = "email") String email){
+        EmailDTO emailMessage = EmailDTO.builder()
+                .to(email)
+                .subject("테스트메일")
+                .message("비밀번호 재설정을 위한 이메일입니다.")
+                .build();
+        emailService.sendMail(emailMessage);
+        return new ResponseEntity(HttpStatus.OK);
+    }
     @PostMapping("/login")
     public ResponseEntity<TokenDto> login(@RequestBody LoginRequestDTO requestDto) {
 

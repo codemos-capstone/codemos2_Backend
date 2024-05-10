@@ -2,6 +2,7 @@ package com.seoultech.codemos.service.oauth;
 
 import com.seoultech.codemos.dto.TokenDto;
 import com.seoultech.codemos.jwt.TokenProvider;
+import com.seoultech.codemos.service.UserService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -18,15 +19,23 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
     @Autowired
     private TokenProvider tokenProvider;
+    @Autowired
+    private GoogleUserService googleUserService; // 사용자 정보를 관리하는 서비스
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
         if (authentication instanceof OAuth2AuthenticationToken) {
             OAuth2AuthenticationToken oauthToken = (OAuth2AuthenticationToken) authentication;
+            String userEmail = oauthToken.getPrincipal().getAttribute("email");
+            boolean isNewUser = GoogleUserService.isNewUser(userEmail);
+            String targetUrl;
+            if (isNewUser) {
+                targetUrl = "http://localhost:3000/login?oauth=true&email="+userEmail;
+            } else {
+                TokenDto tokenDto = tokenProvider.generateTokenDto(oauthToken);
+                targetUrl = "http://localhost:3000/oauthMiddle#accessToken=" + tokenDto.getAccessToken();
+            }
 
-            TokenDto tokenDto = tokenProvider.generateTokenDto(oauthToken);
-
-            String targetUrl = "http://localhost:3000/oauthMiddle#accessToken=" + tokenDto.getAccessToken();
             response.sendRedirect(targetUrl);
         }
     }
