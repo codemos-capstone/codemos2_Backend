@@ -37,7 +37,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         if (userRequest == null) {
             throw new IllegalArgumentException("OAuth2UserRequest cannot be null");
         }
-
+        System.out.println("NEWUSER!!!");
         OAuth2User oAuth2User;
         try {
             oAuth2User = super.loadUser(userRequest);
@@ -61,16 +61,11 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         String email = oAuth2User.getAttribute("email");
         String name = oAuth2User.getAttribute("name");
         System.out.println("UserEmail: " + email);
-
         Optional<UserEntity> userOptional = userRepository.findByEmail(email);
         UserEntity user;
-        if (!userOptional.isPresent()) {
-            // 사용자 등록 로직
-            user = googleUserService.registerOrUpdateGoogleUser(email, name);
-
-        } else {
-            user = userOptional.get();
-            System.out.println("이미 있는 유저, JWT 토큰 발급 로직 여기서");
+        if (userOptional.isEmpty()) {
+            googleUserService.registerOrUpdateGoogleUser(email, name);
+            return oAuth2User;
         }
 
         List<GrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"));
