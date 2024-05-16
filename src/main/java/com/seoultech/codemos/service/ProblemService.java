@@ -27,6 +27,10 @@ public class ProblemService {
         return mapToProblemResponse(savedProblem);
     }
 
+    public void deleteProblem(String problemId) {
+        problemRepository.deleteById(problemId);
+    }
+
     public ProblemResponseDto updateProblem(String problemId, ProblemRequestDto requestDto) {
         Problem problem = problemRepository.findById(problemId)
                 .orElseThrow(() -> new IllegalArgumentException("not found: " + problemId));

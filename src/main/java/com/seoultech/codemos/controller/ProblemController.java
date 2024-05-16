@@ -48,7 +48,11 @@ public class ProblemController {
         ProblemResponseDto updatedProblem = problemService.updateProblem(problemId, requestDto);
         return ResponseEntity.ok(updatedProblem);
     }
-//
-//    @DeleteMapping("/admin/problems/{problemId}")
-//    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+
+    @DeleteMapping("/admin/problems/{problemId}")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    public ResponseEntity<Void> deleteProblem(@PathVariable String problemId) {
+        problemService.deleteProblem(problemId);
+        return ResponseEntity.noContent().build();
+    }
 }
