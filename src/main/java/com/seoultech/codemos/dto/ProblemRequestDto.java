@@ -12,6 +12,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ProblemRequestDto {
+    private Integer problemNumber;
     private String title;
     private String description;
     private double timeLimit;

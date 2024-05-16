@@ -25,13 +25,32 @@ public class ProblemController {
 
     private final ProblemService problemService;
 
-    // 일반 사용자용, 로그인 안해도 조회 가능?
+    // 로그인 안해도 조회 가능??
     @GetMapping("/problems")
     public ResponseEntity<List<ProblemMetadataDto>> getProblemList() {
         List<ProblemMetadataDto> problemList = problemService.getProblemList();
         return ResponseEntity.ok(problemList);
     }
 
+    @GetMapping("/problems/official")
+    public ResponseEntity<List<ProblemMetadataDto>> getOfficialProblemList() {
+        List<ProblemMetadataDto> problemList = problemService.getOfficialProblemList();
+        return ResponseEntity.ok(problemList);
+    }
+
+    @GetMapping("/problems/user")
+    public ResponseEntity<List<ProblemMetadataDto>> getUserProblemList() {
+        List<ProblemMetadataDto> problemList = problemService.getUserProblemList();
+        return ResponseEntity.ok(problemList);
+    }
+
+    @GetMapping("/problems/{problemId}")
+    public ResponseEntity<ProblemResponseDto> getProblemDetails(@PathVariable String problemId) {
+        ProblemResponseDto problem = problemService.getProblemDetails(problemId);
+        return ResponseEntity.ok(problem);
+    }
+
+    // 일반 사용자용 엔드포인트
     @PostMapping("/problems")
     public ResponseEntity<ProblemResponseDto> createUserProblem(@RequestBody ProblemRequestDto requestDto) {
         requestDto.setUserDefined(true);

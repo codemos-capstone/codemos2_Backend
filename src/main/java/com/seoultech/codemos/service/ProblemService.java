@@ -15,9 +15,24 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class ProblemService {
     private final ProblemRepository problemRepository;
+    public static final int USER_PROBLEM_START_NUMBER = 10000;
 
     public List<ProblemMetadataDto> getProblemList() {
         List<Problem> problems = problemRepository.findAll();
+        return problems.stream()
+                .map(this::mapToProblemMetadata)
+                .collect(Collectors.toList());
+    }
+
+    public List<ProblemMetadataDto> getOfficialProblemList() {
+        List<Problem> problems = problemRepository.findByUserDefinedFalse();
+        return problems.stream()
+                .map(this::mapToProblemMetadata)
+                .collect(Collectors.toList());
+    }
+
+    public List<ProblemMetadataDto> getUserProblemList() {
+        List<Problem> problems = problemRepository.findByUserDefinedTrue();
         return problems.stream()
                 .map(this::mapToProblemMetadata)
                 .collect(Collectors.toList());
@@ -35,6 +50,10 @@ public class ProblemService {
         String userId = SecurityContextHolder.getContext().getAuthentication().getName();
         Problem problem = mapToProblem(requestDto);
         problem.setUserId(userId);
+
+        int maxUserProblemNumber = problemRepository.findMaxUserProblemNumber();
+        problem.setProblemNumber(maxUserProblemNumber + 1);
+
         Problem savedProblem = problemRepository.save(problem);
         return mapToProblemResponse(savedProblem);
     }
@@ -67,8 +86,18 @@ public class ProblemService {
         problemRepository.deleteById(problemId);
     }
 
+    public ProblemResponseDto getProblemDetails(String problemId) {
+        Problem problem = problemRepository.findById(problemId)
+                .orElseThrow(() -> new IllegalArgumentException("not found: " + problemId));
+        return mapToProblemResponse(problem);
+    }
+
     public ProblemResponseDto createProblem(ProblemRequestDto requestDto) {
         Problem problem = mapToProblem(requestDto);
+        if (requestDto.getProblemNumber() != null) {
+            problem.setProblemNumber(requestDto.getProblemNumber());
+        }
+
         Problem savedProblem = problemRepository.save(problem);
         return mapToProblemResponse(savedProblem);
     }
