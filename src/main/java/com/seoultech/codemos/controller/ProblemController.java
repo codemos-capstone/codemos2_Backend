@@ -1,5 +1,6 @@
 package com.seoultech.codemos.controller;
 
+import com.seoultech.codemos.dto.ProblemMetadataDto;
 import com.seoultech.codemos.dto.ProblemRequestDto;
 import com.seoultech.codemos.dto.ProblemResponseDto;
 import com.seoultech.codemos.service.ProblemService;
@@ -26,9 +27,32 @@ public class ProblemController {
 
     // 일반 사용자용, 로그인 안해도 조회 가능?
     @GetMapping("/problems")
-    public ResponseEntity<List<ProblemResponseDto>> getProblemList() {
-        List<ProblemResponseDto> problemList = problemService.getProblemList();
+    public ResponseEntity<List<ProblemMetadataDto>> getProblemList() {
+        List<ProblemMetadataDto> problemList = problemService.getProblemList();
         return ResponseEntity.ok(problemList);
+    }
+
+    @PostMapping("/problems")
+    public ResponseEntity<ProblemResponseDto> createUserProblem(@RequestBody ProblemRequestDto requestDto) {
+        requestDto.setUserDefined(true);
+        ProblemResponseDto createdProblem = problemService.createUserProblem(requestDto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdProblem);
+    }
+
+    @PutMapping("/problems/{problemId}")
+    public ResponseEntity<ProblemResponseDto> updateUserProblem(
+            @PathVariable String problemId,
+            @RequestBody ProblemRequestDto requestDto
+    ) {
+        requestDto.setUserDefined(true);
+        ProblemResponseDto updatedProblem = problemService.updateUserProblem(problemId, requestDto);
+        return ResponseEntity.ok(updatedProblem);
+    }
+
+    @DeleteMapping("/problems/{problemId}")
+    public ResponseEntity<Void> deleteUserProblem(@PathVariable String problemId) {
+        problemService.deleteUserProblem(problemId);
+        return ResponseEntity.noContent().build();
     }
 
     // 관리자용 엔드포인트

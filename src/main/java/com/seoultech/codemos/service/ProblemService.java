@@ -1,5 +1,6 @@
 package com.seoultech.codemos.service;
 
+import com.seoultech.codemos.dto.ProblemMetadataDto;
 import com.seoultech.codemos.dto.ProblemRequestDto;
 import com.seoultech.codemos.dto.ProblemResponseDto;
 import com.seoultech.codemos.model.Problem;
@@ -7,6 +8,7 @@ import com.seoultech.codemos.repository.ProblemRepository;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -14,11 +16,55 @@ import org.springframework.stereotype.Service;
 public class ProblemService {
     private final ProblemRepository problemRepository;
 
-    public List<ProblemResponseDto> getProblemList() {
+    public List<ProblemMetadataDto> getProblemList() {
         List<Problem> problems = problemRepository.findAll();
         return problems.stream()
-                .map(this::mapToProblemResponse)
+                .map(this::mapToProblemMetadata)
                 .collect(Collectors.toList());
+    }
+
+    private ProblemMetadataDto mapToProblemMetadata(Problem problem) {
+        return ProblemMetadataDto.builder()
+                .id(problem.getId())
+                .problemNumber(problem.getProblemNumber())
+                .title(problem.getTitle())
+                .build();
+    }
+
+    public ProblemResponseDto createUserProblem(ProblemRequestDto requestDto) {
+        String userId = SecurityContextHolder.getContext().getAuthentication().getName();
+        Problem problem = mapToProblem(requestDto);
+        problem.setUserId(userId);
+        Problem savedProblem = problemRepository.save(problem);
+        return mapToProblemResponse(savedProblem);
+    }
+
+    public ProblemResponseDto updateUserProblem(String problemId, ProblemRequestDto requestDto) {
+        String userId = SecurityContextHolder.getContext().getAuthentication().getName();
+        Problem problem = problemRepository.findById(problemId)
+                .orElseThrow(() -> new IllegalArgumentException("not found: " + problemId));
+
+        if (!problem.isUserDefined() || !problem.getUserId().equals(userId)) {
+            throw new IllegalArgumentException("No auth");
+        }
+
+        updateProblemFields(problem, requestDto);
+
+        Problem updatedProblem = problemRepository.save(problem);
+
+        return mapToProblemResponse(updatedProblem);
+    }
+
+    public void deleteUserProblem(String problemId) {
+        String userId = SecurityContextHolder.getContext().getAuthentication().getName();
+        Problem problem = problemRepository.findById(problemId)
+                .orElseThrow(() -> new IllegalArgumentException("not found: " + problemId));
+
+        if (!problem.isUserDefined() || !problem.getUserId().equals(userId)) {
+            throw new IllegalArgumentException("No auth");
+        }
+
+        problemRepository.deleteById(problemId);
     }
 
     public ProblemResponseDto createProblem(ProblemRequestDto requestDto) {
@@ -35,6 +81,13 @@ public class ProblemService {
         Problem problem = problemRepository.findById(problemId)
                 .orElseThrow(() -> new IllegalArgumentException("not found: " + problemId));
 
+        updateProblemFields(problem, requestDto);
+
+        Problem updatedProblem = problemRepository.save(problem);
+        return mapToProblemResponse(updatedProblem);
+    }
+
+    private void updateProblemFields(Problem problem, ProblemRequestDto requestDto) {
         problem.setTitle(requestDto.getTitle());
         problem.setDescription(requestDto.getDescription());
         problem.setTimeLimit(requestDto.getTimeLimit());
@@ -45,10 +98,6 @@ public class ProblemService {
         problem.setInitialVelocityX(requestDto.getInitialVelocityX());
         problem.setInitialVelocityY(requestDto.getInitialVelocityY());
         problem.setRestrictedMethods(requestDto.getRestrictedMethods());
-        problem.setUserDefined(requestDto.isUserDefined());
-
-        Problem updatedProblem = problemRepository.save(problem);
-        return mapToProblemResponse(updatedProblem);
     }
 
     private Problem mapToProblem(ProblemRequestDto requestDto) {

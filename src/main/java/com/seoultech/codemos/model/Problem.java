@@ -27,4 +27,5 @@ public class Problem {
     private double initialVelocityY;
     private List<String> restrictedMethods;
     private boolean isUserDefined;
+    private String userId;
 }
