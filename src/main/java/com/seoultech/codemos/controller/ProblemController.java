@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -37,9 +38,16 @@ public class ProblemController {
         ProblemResponseDto createdProblem = problemService.createProblem(requestDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdProblem);
     }
-//
-//    @PutMapping("/admin/problems/{problemId}")
-//    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+
+    @PutMapping("/admin/problems/{problemId}")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    public ResponseEntity<ProblemResponseDto> updateProblem(
+            @PathVariable String problemId,
+            @RequestBody ProblemRequestDto requestDto
+    ) {
+        ProblemResponseDto updatedProblem = problemService.updateProblem(problemId, requestDto);
+        return ResponseEntity.ok(updatedProblem);
+    }
 //
 //    @DeleteMapping("/admin/problems/{problemId}")
 //    @PreAuthorize("hasAuthority('ROLE_ADMIN')")

@@ -27,6 +27,26 @@ public class ProblemService {
         return mapToProblemResponse(savedProblem);
     }
 
+    public ProblemResponseDto updateProblem(String problemId, ProblemRequestDto requestDto) {
+        Problem problem = problemRepository.findById(problemId)
+                .orElseThrow(() -> new IllegalArgumentException("not found: " + problemId));
+
+        problem.setTitle(requestDto.getTitle());
+        problem.setDescription(requestDto.getDescription());
+        problem.setTimeLimit(requestDto.getTimeLimit());
+        problem.setFuelLimit(requestDto.getFuelLimit());
+        problem.setInitialX(requestDto.getInitialX());
+        problem.setInitialY(requestDto.getInitialY());
+        problem.setInitialAngle(requestDto.getInitialAngle());
+        problem.setInitialVelocityX(requestDto.getInitialVelocityX());
+        problem.setInitialVelocityY(requestDto.getInitialVelocityY());
+        problem.setRestrictedMethods(requestDto.getRestrictedMethods());
+        problem.setUserDefined(requestDto.isUserDefined());
+
+        Problem updatedProblem = problemRepository.save(problem);
+        return mapToProblemResponse(updatedProblem);
+    }
+
     private Problem mapToProblem(ProblemRequestDto requestDto) {
         return Problem.builder()
                 .title(requestDto.getTitle())
