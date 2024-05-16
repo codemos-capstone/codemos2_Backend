@@ -1,5 +1,6 @@
 package com.seoultech.codemos.service;
 
+import com.seoultech.codemos.dto.ProblemRequestDto;
 import com.seoultech.codemos.dto.ProblemResponseDto;
 import com.seoultech.codemos.model.Problem;
 import com.seoultech.codemos.repository.ProblemRepository;
@@ -18,6 +19,28 @@ public class ProblemService {
         return problems.stream()
                 .map(this::mapToProblemResponse)
                 .collect(Collectors.toList());
+    }
+
+    public ProblemResponseDto createProblem(ProblemRequestDto requestDto) {
+        Problem problem = mapToProblem(requestDto);
+        Problem savedProblem = problemRepository.save(problem);
+        return mapToProblemResponse(savedProblem);
+    }
+
+    private Problem mapToProblem(ProblemRequestDto requestDto) {
+        return Problem.builder()
+                .title(requestDto.getTitle())
+                .description(requestDto.getDescription())
+                .timeLimit(requestDto.getTimeLimit())
+                .fuelLimit(requestDto.getFuelLimit())
+                .initialX(requestDto.getInitialX())
+                .initialY(requestDto.getInitialY())
+                .initialAngle(requestDto.getInitialAngle())
+                .initialVelocityX(requestDto.getInitialVelocityX())
+                .initialVelocityY(requestDto.getInitialVelocityY())
+                .restrictedMethods(requestDto.getRestrictedMethods())
+                .isUserDefined(requestDto.isUserDefined())
+                .build();
     }
 
     private ProblemResponseDto mapToProblemResponse(Problem problem) {
