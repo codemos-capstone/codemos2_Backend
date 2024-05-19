@@ -25,14 +25,14 @@ public class ProblemService {
     }
 
     public List<ProblemMetadataDto> getOfficialProblemList() {
-        List<Problem> problems = problemRepository.findByUserDefinedFalse();
+        List<Problem> problems = problemRepository.findByIsUserDefinedFalse();
         return problems.stream()
                 .map(this::mapToProblemMetadata)
                 .collect(Collectors.toList());
     }
 
     public List<ProblemMetadataDto> getUserProblemList() {
-        List<Problem> problems = problemRepository.findByUserDefinedTrue();
+        List<Problem> problems = problemRepository.findByIsUserDefinedTrue();
         return problems.stream()
                 .map(this::mapToProblemMetadata)
                 .collect(Collectors.toList());
@@ -58,9 +58,9 @@ public class ProblemService {
         return mapToProblemResponse(savedProblem);
     }
 
-    public ProblemResponseDto updateUserProblem(String problemId, ProblemRequestDto requestDto) {
+    public ProblemResponseDto updateUserProblem(int problemId, ProblemRequestDto requestDto) {
         String userId = SecurityContextHolder.getContext().getAuthentication().getName();
-        Problem problem = problemRepository.findById(problemId)
+        Problem problem = problemRepository.findByProblemNumber(problemId)
                 .orElseThrow(() -> new IllegalArgumentException("not found: " + problemId));
 
         if (!problem.isUserDefined() || !problem.getUserId().equals(userId)) {
@@ -74,20 +74,20 @@ public class ProblemService {
         return mapToProblemResponse(updatedProblem);
     }
 
-    public void deleteUserProblem(String problemId) {
+    public void deleteUserProblem(int problemId) {
         String userId = SecurityContextHolder.getContext().getAuthentication().getName();
-        Problem problem = problemRepository.findById(problemId)
+        Problem problem = problemRepository.findByProblemNumber(problemId)
                 .orElseThrow(() -> new IllegalArgumentException("not found: " + problemId));
 
         if (!problem.isUserDefined() || !problem.getUserId().equals(userId)) {
             throw new IllegalArgumentException("No auth");
         }
 
-        problemRepository.deleteById(problemId);
+        problemRepository.delete(problem);
     }
 
-    public ProblemResponseDto getProblemDetails(String problemId) {
-        Problem problem = problemRepository.findById(problemId)
+    public ProblemResponseDto getProblemDetails(int problemId) {
+        Problem problem = problemRepository.findByProblemNumber(problemId)
                 .orElseThrow(() -> new IllegalArgumentException("not found: " + problemId));
         return mapToProblemResponse(problem);
     }
@@ -102,12 +102,14 @@ public class ProblemService {
         return mapToProblemResponse(savedProblem);
     }
 
-    public void deleteProblem(String problemId) {
-        problemRepository.deleteById(problemId);
+    public void deleteProblem(int problemId) {
+        Problem problem = problemRepository.findByProblemNumber(problemId)
+                .orElseThrow(() -> new IllegalArgumentException("not found: " + problemId));
+        problemRepository.delete(problem);
     }
 
-    public ProblemResponseDto updateProblem(String problemId, ProblemRequestDto requestDto) {
-        Problem problem = problemRepository.findById(problemId)
+    public ProblemResponseDto updateProblem(int problemId, ProblemRequestDto requestDto) {
+        Problem problem = problemRepository.findByProblemNumber(problemId)
                 .orElseThrow(() -> new IllegalArgumentException("not found: " + problemId));
 
         updateProblemFields(problem, requestDto);
