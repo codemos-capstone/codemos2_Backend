@@ -40,4 +40,3 @@ spring.log
 
 # application.properties도 필요시 추가
 src/main/resources/application.properties
-
