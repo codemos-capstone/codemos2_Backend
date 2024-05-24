@@ -30,13 +30,13 @@ public class AuthController {
     @PutMapping("/sign")
     public void updateUserInfo(){}
     @PostMapping("/change-pwd")
-    public ResponseEntity changePwd(@RequestParam(name = "email") String email){
-        EmailDTO emailMessage = EmailDTO.builder()
-                .to(email)
-                .subject("테스트메일")
-                .message("비밀번호 재설정을 위한 이메일입니다.")
-                .build();
-        emailService.sendMail(emailMessage);
+    public ResponseEntity requestChangePwd(@RequestParam(name = "email") String email){
+        emailService.sendMail(email);
+        return new ResponseEntity(HttpStatus.OK);
+    }
+    @PostMapping("/reset-password")
+    public ResponseEntity resetPassword(@RequestParam(name = "token") String resetPwdToken, @RequestBody ChangePasswordRequestDTO requestDTO){
+        authService.resetPassword(resetPwdToken, requestDTO);
         return new ResponseEntity(HttpStatus.OK);
     }
     @PostMapping("/login")
