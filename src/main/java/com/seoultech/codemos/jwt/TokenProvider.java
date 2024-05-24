@@ -26,10 +26,16 @@ public class TokenProvider {
     private static final String BEARER_TYPE = "bearer";
     private static final long ACCESS_TOKEN_EXPIRE_TIME = 1000 * 60 * 60;    //1시간
     private final Key key;
+    private static final long RESET_PASSWORD_TOKEN_EXPIRE_TIME = 3600_000; // 1시간
+
+    @Value("${security.jwt.reset-password-token-key}")
+    String resetPasswordTokenKey;
     public TokenProvider(@Value("${jwt.secret}") String secretKey) {
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         this.key = Keys.hmacShaKeyFor(keyBytes);
     }
+
+
 
 
     public TokenDto generateTokenDto(Authentication authentication) {
@@ -69,6 +75,18 @@ public class TokenProvider {
                 .tokenExpiresIn(tokenExpiresIn.getTime())
                 .build();
     }
+    public String createResetPasswordToken(String email) {
+        long now = (new Date()).getTime();
+        Date tokenExpiresIn = new Date(now + RESET_PASSWORD_TOKEN_EXPIRE_TIME);
+        byte[] keyBytes = Decoders.BASE64.decode(resetPasswordTokenKey);
+        Key resetPwdKey = Keys.hmacShaKeyFor(keyBytes);
+
+        return Jwts.builder()
+                .setSubject(email)
+                .setExpiration(tokenExpiresIn)
+                .signWith(resetPwdKey, SignatureAlgorithm.HS512)
+                .compact();
+    }
 
     public Authentication getAuthentication(String accessToken) {
         Claims claims = parseClaims(accessToken);
@@ -100,7 +118,6 @@ public class TokenProvider {
         }
         return false;
     }
-
     private Claims parseClaims(String accessToken) {
         try {
             return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(accessToken).getBody();
@@ -108,7 +125,6 @@ public class TokenProvider {
             return e.getClaims();
         }
     }
-
     public String getUsernameFromToken(String token) {
         Claims claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
         return claims.getSubject();
