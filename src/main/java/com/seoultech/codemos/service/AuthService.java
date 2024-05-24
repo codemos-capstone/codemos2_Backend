@@ -58,6 +58,8 @@ public class AuthService {
 
         user.setPassword(passwordEncoder.encode(requestDTO.getNewPassword()));
         userRepository.save(user);
+
+        tokenProvider.expireToken(resetPwdToken);
     }
 
 }

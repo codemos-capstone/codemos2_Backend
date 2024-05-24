@@ -35,8 +35,15 @@ public class TokenProvider {
         this.key = Keys.hmacShaKeyFor(keyBytes);
     }
 
-
-
+    public void expireToken(String token) {
+        try {
+            Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
+            Claims claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
+            claims.setExpiration(new Date(System.currentTimeMillis()));
+        } catch (Exception e) {
+            System.out.println("이미 만료됨");
+        }
+    }
 
     public TokenDto generateTokenDto(Authentication authentication) {
         String authorities = authentication.getAuthorities().stream()
