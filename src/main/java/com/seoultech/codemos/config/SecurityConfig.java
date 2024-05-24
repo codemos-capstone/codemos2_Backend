@@ -62,6 +62,7 @@ public class SecurityConfig {
                         .requestMatchers("/auth/**").permitAll()
                         .requestMatchers("/auth/sign").permitAll()
                         .requestMatchers("/auth/login").permitAll()
+                        .requestMatchers("/auth/reset-password").permitAll()
                         .requestMatchers("/api/v1/code-file/**").permitAll()
                         .requestMatchers("/api/v1/judge/**").permitAll()
                         .anyRequest().authenticated()

@@ -1,5 +1,6 @@
 package com.seoultech.codemos.service;
 
+import com.seoultech.codemos.dto.ChangePasswordRequestDTO;
 import com.seoultech.codemos.dto.LoginRequestDTO;
 import com.seoultech.codemos.dto.TokenDto;
 import com.seoultech.codemos.dto.UserRequestDTO;
@@ -44,6 +45,19 @@ public class AuthService {
     }
     public Authentication getAuthentication(String email) {
         return new UsernamePasswordAuthenticationToken(email, null);
+    }
+
+    public void resetPassword(String resetPwdToken, ChangePasswordRequestDTO requestDTO) {
+        if(!tokenProvider.validateToken(resetPwdToken)){
+            throw new RuntimeException("썩은토큰");
+        }
+        String email = tokenProvider.getUsernameFromToken(resetPwdToken);
+        System.out.println("email = " + email);
+        UserEntity user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("누구세요"));
+
+        user.setPassword(passwordEncoder.encode(requestDTO.getNewPassword()));
+        userRepository.save(user);
     }
 
 }

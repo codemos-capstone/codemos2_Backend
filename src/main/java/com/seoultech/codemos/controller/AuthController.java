@@ -35,8 +35,8 @@ public class AuthController {
         return new ResponseEntity(HttpStatus.OK);
     }
     @PostMapping("/reset-password")
-    public ResponseEntity changePwdPage(@RequestParam(name = "token") String resetPwdToken){
-
+    public ResponseEntity resetPassword(@RequestParam(name = "token") String resetPwdToken, @RequestBody ChangePasswordRequestDTO requestDTO){
+        authService.resetPassword(resetPwdToken, requestDTO);
         return new ResponseEntity(HttpStatus.OK);
     }
     @PostMapping("/login")
