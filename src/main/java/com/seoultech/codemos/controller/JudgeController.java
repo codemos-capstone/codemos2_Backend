@@ -21,7 +21,7 @@ public class JudgeController {
     private final TokenProvider tokenProvider;
     private final JudgeService judgeService;
 
-    @PostMapping("problem/{problemId}/execute")
+    @PostMapping("problem/{problemId}/score")
     public ResponseEntity<JudgeResultResponseDTO> execute(@PathVariable Integer problemId, @RequestBody JudgeCodeDTO requestDto) {//,
         //@RequestHeader(value = "Authorization") String token) {
 //        token = token.substring(7);

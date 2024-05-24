@@ -50,6 +50,7 @@ public class CodeFileService {
 
     public CodeFileResponseDto getCodeFileDetails(String fileId) {
         String userId = SecurityContextHolder.getContext().getAuthentication().getName();
+        System.out.println("userId = " + userId);
         CodeFile codeFile = codeFileRepository.findByIdAndUserId(fileId, userId)
                 .orElseThrow(() -> new RuntimeException("Code file not found"));
         return mapToResponseDto(codeFile);
