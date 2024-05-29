@@ -97,4 +97,27 @@ public class UserService {
         return rankingEntity;
     }
 
+    @Transactional
+    public void updateSolvedProblem(Integer problemId) {
+        UserEntity user = userRepository.findById(SecurityUtil.getCurrentMemberId())
+                .orElseThrow(() -> new RuntimeException("로그인 유저 정보가 없습니다"));
+
+        if (!user.getSolvedProblems().contains(problemId.toString())) {
+            user.getSolvedProblems().add(problemId.toString());
+            user.setExperience(user.getExperience() + calculateExperiencePoints(problemId));
+            user.setLevel(calculateLevel(user.getExperience()));
+            userRepository.save(user);
+        }
+    }
+
+    private Integer calculateExperiencePoints(Integer problemId) {
+        // 문제 난이도에 따른 경험치 계산 로직 구현
+        return 0;
+    }
+
+    private Integer calculateLevel(Integer experience) {
+        // 경험치에 따른 레벨 계산 로직 구현
+        return 0;
+    }
+
 }

@@ -30,14 +30,14 @@ public class CodeFileController {
     private final JudgeService judgeService;
 
     @PostMapping
-    @PreAuthorize("hasAuthority('OAUTH2_USER')")
+    @PreAuthorize("hasAuthority('OAUTH2_USER') or hasAuthority('ROLE_USER')")
     public ResponseEntity<CodeFileResponseDto> createCodeFile(@RequestBody CodeFileRequestDto requestDto) {
         CodeFileResponseDto responseDto = codeFileService.createCodeFile(requestDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
     }
 
     @GetMapping
-    @PreAuthorize("hasAuthority('OAUTH2_USER')")
+    @PreAuthorize("hasAuthority('OAUTH2_USER') or hasAuthority('ROLE_USER')")
     public ResponseEntity<List<CodeFileResponseDto>> getCodeFileList() {
         System.out.println("codeFileService = " + codeFileService);
         List<CodeFileResponseDto> responseDtoList = codeFileService.getCodeFileList();
@@ -45,35 +45,35 @@ public class CodeFileController {
     }
 
     @GetMapping("/problem/{problemId}")
-    @PreAuthorize("hasAuthority('OAUTH2_USER')")
+    @PreAuthorize("hasAuthority('OAUTH2_USER') or hasAuthority('ROLE_USER')")
     public ResponseEntity<List<CodeFileResponseDto>> getProblemCodeFileList(@PathVariable Integer problemId) {
         List<CodeFileResponseDto> responseDtoList = codeFileService.getProblemCodeFileList(problemId);
         return ResponseEntity.ok(responseDtoList);
     }
 
     @GetMapping("/{fileId}")
-    @PreAuthorize("hasAuthority('OAUTH2_USER')")
+    @PreAuthorize("hasAuthority('OAUTH2_USER') or hasAuthority('ROLE_USER')")
     public ResponseEntity<CodeFileResponseDto> getCodeFileDetails(@PathVariable String fileId) {
         CodeFileResponseDto responseDto = codeFileService.getCodeFileDetails(fileId);
         return ResponseEntity.ok(responseDto);
     }
 
     @PutMapping("/{fileId}")
-    @PreAuthorize("hasAuthority('OAUTH2_USER')")
+    @PreAuthorize("hasAuthority('OAUTH2_USER') or hasAuthority('ROLE_USER')")
     public ResponseEntity<CodeFileResponseDto> updateCodeFile(@PathVariable String fileId, @RequestBody CodeFileRequestDto requestDto) {
         CodeFileResponseDto responseDto = codeFileService.updateCodeFile(fileId, requestDto);
         return ResponseEntity.ok(responseDto);
     }
 
     @DeleteMapping("/{fileId}")
-    @PreAuthorize("hasAuthority('OAUTH2_USER')")
+    @PreAuthorize("hasAuthority('OAUTH2_USER') or hasAuthority('ROLE_USER')")
     public ResponseEntity<Void> deleteCodeFile(@PathVariable String fileId) {
         codeFileService.deleteCodeFile(fileId);
         return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/problem/{problemId}/{fileId}/execute")
-    @PreAuthorize("hasAuthority('OAUTH2_USER')")
+    @PreAuthorize("hasAuthority('OAUTH2_USER') or hasAuthority('ROLE_USER')")
     public ResponseEntity<JudgeResultResponseDTO> executeCodeFile(@PathVariable Integer problemId, @PathVariable String fileId) {
         CodeFileResponseDto codeFileResponseDto = codeFileService.getCodeFileDetails(fileId);
         String code = codeFileResponseDto.getContent();

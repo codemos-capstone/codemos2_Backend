@@ -3,6 +3,7 @@ package com.seoultech.codemos.service;
 import com.seoultech.codemos.dto.CodeFileRequestDto;
 import com.seoultech.codemos.dto.CodeFileResponseDto;
 import com.seoultech.codemos.model.CodeFile;
+import com.seoultech.codemos.model.UserEntity;
 import com.seoultech.codemos.repository.CodeFileRepository;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -16,10 +17,11 @@ import org.springframework.stereotype.Service;
 public class CodeFileService {
 
     private final CodeFileRepository codeFileRepository;
-    private final MongoTemplate mongoTemplate;
+    private final AuthService authService;
 
     public CodeFileResponseDto createCodeFile(CodeFileRequestDto requestDto) {
-        String userId = SecurityContextHolder.getContext().getAuthentication().getName();
+        UserEntity user = authService.getCurrentUser();
+        String userId = user.getNickname();
         CodeFile codeFile = CodeFile.builder()
                 .problemId(requestDto.getProblemId())
                 .name(requestDto.getName())
@@ -33,7 +35,8 @@ public class CodeFileService {
     }
 
     public List<CodeFileResponseDto> getCodeFileList() {
-        String userId = SecurityContextHolder.getContext().getAuthentication().getName();
+        UserEntity user = authService.getCurrentUser();
+        String userId = user.getNickname();
         List<CodeFile> codeFiles = codeFileRepository.findByUserId(userId);
         return codeFiles.stream()
                 .map(this::mapToResponseDto)
@@ -41,7 +44,8 @@ public class CodeFileService {
     }
 
     public List<CodeFileResponseDto> getProblemCodeFileList(Integer problemId) {
-        String userId = SecurityContextHolder.getContext().getAuthentication().getName();
+        UserEntity user = authService.getCurrentUser();
+        String userId = user.getNickname();
         List<CodeFile> codeFiles = codeFileRepository.findByUserIdAndProblemId(userId, problemId);
         return codeFiles.stream()
                 .map(this::mapToResponseDto)
@@ -49,7 +53,8 @@ public class CodeFileService {
     }
 
     public CodeFileResponseDto getCodeFileDetails(String fileId) {
-        String userId = SecurityContextHolder.getContext().getAuthentication().getName();
+        UserEntity user = authService.getCurrentUser();
+        String userId = user.getNickname();
         System.out.println("userId = " + userId);
         CodeFile codeFile = codeFileRepository.findByIdAndUserId(fileId, userId)
                 .orElseThrow(() -> new RuntimeException("Code file not found"));
@@ -57,7 +62,8 @@ public class CodeFileService {
     }
 
     public CodeFileResponseDto updateCodeFile(String fileId, CodeFileRequestDto requestDto) {
-        String userId = SecurityContextHolder.getContext().getAuthentication().getName();
+        UserEntity user = authService.getCurrentUser();
+        String userId = user.getNickname();
         CodeFile codeFile = codeFileRepository.findByIdAndUserId(fileId, userId)
                 .orElseThrow(() -> new RuntimeException("Code file not found"));
         codeFile.setContent(requestDto.getContent());
@@ -67,7 +73,8 @@ public class CodeFileService {
     }
 
     public void deleteCodeFile(String fileId) {
-        String userId = SecurityContextHolder.getContext().getAuthentication().getName();
+        UserEntity user = authService.getCurrentUser();
+        String userId = user.getNickname();
         CodeFile codeFile = codeFileRepository.findByIdAndUserId(fileId, userId)
                 .orElseThrow(() -> new RuntimeException("Code file not found"));
         codeFileRepository.delete(codeFile);

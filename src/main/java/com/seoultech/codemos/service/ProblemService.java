@@ -4,7 +4,9 @@ import com.seoultech.codemos.dto.ProblemMetadataDto;
 import com.seoultech.codemos.dto.ProblemRequestDto;
 import com.seoultech.codemos.dto.ProblemResponseDto;
 import com.seoultech.codemos.model.Problem;
+import com.seoultech.codemos.model.UserEntity;
 import com.seoultech.codemos.repository.ProblemRepository;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +17,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class ProblemService {
     private final ProblemRepository problemRepository;
+    private final AuthService authService;
     public static final int USER_PROBLEM_START_NUMBER = 10000;
 
     public List<ProblemMetadataDto> getProblemList() {
@@ -47,9 +50,9 @@ public class ProblemService {
     }
 
     public ProblemResponseDto createUserProblem(ProblemRequestDto requestDto) {
-        String userId = SecurityContextHolder.getContext().getAuthentication().getName();
+        UserEntity user = authService.getCurrentUser();
         Problem problem = mapToProblem(requestDto);
-        problem.setUserId(userId);
+        problem.setUserId(user.getNickname());
 
         int maxUserProblemNumber = problemRepository.findMaxUserProblemNumber();
         problem.setProblemNumber(maxUserProblemNumber + 1);
@@ -59,11 +62,11 @@ public class ProblemService {
     }
 
     public ProblemResponseDto updateUserProblem(int problemId, ProblemRequestDto requestDto) {
-        String userId = SecurityContextHolder.getContext().getAuthentication().getName();
+        UserEntity user = authService.getCurrentUser();
         Problem problem = problemRepository.findByProblemNumber(problemId)
                 .orElseThrow(() -> new IllegalArgumentException("not found: " + problemId));
 
-        if (!problem.isUserDefined() || !problem.getUserId().equals(userId)) {
+        if (!problem.isUserDefined() || !problem.getUserId().equals(user.getNickname())) {
             throw new IllegalArgumentException("No auth");
         }
 
@@ -75,11 +78,11 @@ public class ProblemService {
     }
 
     public void deleteUserProblem(int problemId) {
-        String userId = SecurityContextHolder.getContext().getAuthentication().getName();
+        UserEntity user = authService.getCurrentUser();
         Problem problem = problemRepository.findByProblemNumber(problemId)
                 .orElseThrow(() -> new IllegalArgumentException("not found: " + problemId));
 
-        if (!problem.isUserDefined() || !problem.getUserId().equals(userId)) {
+        if (!problem.isUserDefined() || !problem.getUserId().equals(user.getNickname())) {
             throw new IllegalArgumentException("No auth");
         }
 
@@ -118,6 +121,26 @@ public class ProblemService {
         return mapToProblemResponse(updatedProblem);
     }
 
+    public void updateSolvedUsers(Integer problemId) {
+        UserEntity user = authService.getCurrentUser();
+        String userId = user.getNickname();
+
+        Problem problem = problemRepository.findByProblemNumber(problemId)
+                .orElseThrow(() -> new IllegalArgumentException("not found: " + problemId));
+
+        if (!problem.getSolvedUsers().contains(userId)) {
+            problem.getSolvedUsers().add(userId);
+            problemRepository.save(problem);
+        }
+    }
+
+    public void updateProblemRanking(Integer problemId, String code) {
+        UserEntity user = authService.getCurrentUser();
+        String userId = user.getNickname();
+
+        // ProblemRanking 도큐먼트 업데이트 로직 구현
+    }
+
     private void updateProblemFields(Problem problem, ProblemRequestDto requestDto) {
         problem.setTitle(requestDto.getTitle());
         problem.setDescription(requestDto.getDescription());
@@ -133,6 +156,7 @@ public class ProblemService {
 
     private Problem mapToProblem(ProblemRequestDto requestDto) {
         return Problem.builder()
+                .problemNumber(requestDto.getProblemNumber())
                 .title(requestDto.getTitle())
                 .description(requestDto.getDescription())
                 .timeLimit(requestDto.getTimeLimit())
@@ -144,12 +168,14 @@ public class ProblemService {
                 .initialVelocityY(requestDto.getInitialVelocityY())
                 .restrictedMethods(requestDto.getRestrictedMethods())
                 .isUserDefined(requestDto.isUserDefined())
+                .solvedUsers(new ArrayList<>())
                 .build();
     }
 
     private ProblemResponseDto mapToProblemResponse(Problem problem) {
         return ProblemResponseDto.builder()
                 .id(problem.getId())
+                .problemNumber(problem.getProblemNumber())
                 .title(problem.getTitle())
                 .description(problem.getDescription())
                 .timeLimit(problem.getTimeLimit())
@@ -161,6 +187,7 @@ public class ProblemService {
                 .initialVelocityY(problem.getInitialVelocityY())
                 .restrictedMethods(problem.getRestrictedMethods())
                 .isUserDefined(problem.isUserDefined())
+                .solvedUsers(problem.getSolvedUsers())
                 .build();
     }
 }

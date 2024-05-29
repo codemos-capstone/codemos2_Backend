@@ -28,4 +28,5 @@ public class Problem {
     private List<String> restrictedMethods;
     private boolean isUserDefined;
     private String userId;
+    private List<String> solvedUsers;
 }
