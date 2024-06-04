@@ -1,5 +1,6 @@
 package com.seoultech.codemos.service;
 
+import com.seoultech.codemos.config.SecurityUtil;
 import com.seoultech.codemos.dto.ChangePasswordRequestDTO;
 import com.seoultech.codemos.dto.LoginRequestDTO;
 import com.seoultech.codemos.dto.TokenDto;
@@ -60,6 +61,12 @@ public class AuthService {
         userRepository.save(user);
 
         tokenProvider.expireToken(resetPwdToken);
+    }
+
+    public UserEntity getCurrentUser() {
+        Long userId = SecurityUtil.getCurrentMemberId();
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("로그인 유저 정보가 없습니다"));
     }
 
 }

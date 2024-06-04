@@ -24,6 +24,8 @@ public class UserRequestDTO {
                 .email(email)
                 .password(passwordEncoder.encode(password))
                 .nickname(nickname)
+                .level(0)
+                .experience(0)
                 .authority(Authority.ROLE_USER)
                 .build();
     }

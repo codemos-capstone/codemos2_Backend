@@ -15,6 +15,7 @@ public class ProblemRequestDto {
     private Integer problemNumber;
     private String title;
     private String description;
+    private Integer difficulty;
     private double timeLimit;
     private double fuelLimit;
     private double initialX;

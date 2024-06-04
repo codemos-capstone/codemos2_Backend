@@ -15,9 +15,10 @@ import java.util.List;
 public class Problem {
     @Id
     private String id;
-    private int problemNumber;
+    private Integer problemNumber;
     private String title;
     private String description;
+    private Integer difficulty;
     private double timeLimit;
     private double fuelLimit;
     private double initialX;
@@ -28,4 +29,5 @@ public class Problem {
     private List<String> restrictedMethods;
     private boolean isUserDefined;
     private String userId;
+    private List<String> solvedUsers;
 }

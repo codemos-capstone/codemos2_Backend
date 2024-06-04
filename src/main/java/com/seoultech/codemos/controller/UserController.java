@@ -9,6 +9,7 @@ import com.seoultech.codemos.model.LeaderBoardEntity;
 import com.seoultech.codemos.model.RankingEntity;
 import com.seoultech.codemos.repository.LeaderBoardRepository;
 import com.seoultech.codemos.service.UserService;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -23,27 +24,28 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @RequestMapping("/user")
 public class UserController {
-
-    private final UserService memberService;
-    @Autowired
+    private final UserService userService;
     private final TokenProvider tokenProvider;
-    @Autowired
     private final LeaderBoardRepository leaderBoardRepository;
 
     @GetMapping("/me")
     public ResponseEntity<UserResponseDTO> getMyMemberInfo() {
-        UserResponseDTO myInfoBySecurity = memberService.getMyInfoBySecurity();
+        UserResponseDTO myInfoBySecurity = userService.getMyInfoBySecurity();
         System.out.println(myInfoBySecurity.getNickname());
         return ResponseEntity.ok((myInfoBySecurity));
         // return ResponseEntity.ok(memberService.getMyInfoBySecurity());
     }
 
-    @PostMapping("/nickname")
-    public ResponseEntity<UserResponseDTO> setMemberNickname(@RequestBody UserRequestDTO request) {
-        return ResponseEntity.ok(memberService.changeMemberNickname(request.getEmail(), request.getNickname()));
+    @GetMapping("/profile/{nickname}")
+    public ResponseEntity<Map<String, Object>> getUserProfile(@PathVariable String nickname) {
+        Map<String, Object> profileData = userService.getUserProfileByNickname(nickname);
+        return ResponseEntity.ok(profileData);
     }
 
-    private final UserService userService;
+    @PostMapping("/nickname")
+    public ResponseEntity<UserResponseDTO> setMemberNickname(@RequestBody UserRequestDTO request) {
+        return ResponseEntity.ok(userService.changeMemberNickname(request.getEmail(), request.getNickname()));
+    }
 
     @GetMapping("/mypage")
     public ResponseEntity<MypageResponseDTO> getMyPage(@AuthenticationPrincipal UserDetails userDetails) {

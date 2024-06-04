@@ -13,8 +13,10 @@ import java.util.List;
 @AllArgsConstructor
 public class ProblemResponseDto {
     private String id;
+    private Integer problemNumber;
     private String title;
     private String description;
+    private Integer difficulty;
     private double timeLimit;
     private double fuelLimit;
     private double initialX;
@@ -24,4 +26,5 @@ public class ProblemResponseDto {
     private double initialVelocityY;
     private List<String> restrictedMethods;
     private boolean isUserDefined;
+    private List<String> solvedUsers;
 }

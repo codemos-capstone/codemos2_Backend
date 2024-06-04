@@ -52,23 +52,28 @@ public class ProblemController {
 
     // 일반 사용자용 엔드포인트
     @PostMapping("/problems")
+    @PreAuthorize("hasAuthority('OAUTH2_USER') or hasAuthority('ROLE_USER')")
     public ResponseEntity<ProblemResponseDto> createUserProblem(@RequestBody ProblemRequestDto requestDto) {
         requestDto.setUserDefined(true);
+        requestDto.setDifficulty(0);
         ProblemResponseDto createdProblem = problemService.createUserProblem(requestDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdProblem);
     }
 
     @PutMapping("/problems/{problemId}")
+    @PreAuthorize("hasAuthority('OAUTH2_USER') or hasAuthority('ROLE_USER')")
     public ResponseEntity<ProblemResponseDto> updateUserProblem(
             @PathVariable int problemId,
             @RequestBody ProblemRequestDto requestDto
     ) {
         requestDto.setUserDefined(true);
+        requestDto.setDifficulty(0);
         ProblemResponseDto updatedProblem = problemService.updateUserProblem(problemId, requestDto);
         return ResponseEntity.ok(updatedProblem);
     }
 
     @DeleteMapping("/problems/{problemId}")
+    @PreAuthorize("hasAuthority('OAUTH2_USER') or hasAuthority('ROLE_USER')")
     public ResponseEntity<Void> deleteUserProblem(@PathVariable int problemId) {
         problemService.deleteUserProblem(problemId);
         return ResponseEntity.noContent().build();
