@@ -30,16 +30,13 @@ public class JudgeController {
         JudgeResultResponseDTO responseDTO = judgeService.judgeCode(problemId, requestDto.getCode());
 
         if (responseDTO != null && responseDTO.getScore() > 0) {
-            handleProblemSolved(problemId, requestDto.getCode());
+            userService.updateSolvedProblem(problemId);
+            problemService.updateSolvedUsers(problemId);
+
+            problemService.updateProblemRanking(problemId, requestDto.getCode(), responseDTO);
         }
 
         return ResponseEntity.ok(responseDTO);
     }
 
-    private void handleProblemSolved(Integer problemId, String code) {
-        userService.updateSolvedProblem(problemId);
-
-        problemService.updateSolvedUsers(problemId);
-        problemService.updateProblemRanking(problemId, code);
-    }
 }

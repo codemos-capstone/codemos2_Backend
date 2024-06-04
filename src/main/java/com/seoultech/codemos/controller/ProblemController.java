@@ -55,6 +55,7 @@ public class ProblemController {
     @PreAuthorize("hasAuthority('OAUTH2_USER') or hasAuthority('ROLE_USER')")
     public ResponseEntity<ProblemResponseDto> createUserProblem(@RequestBody ProblemRequestDto requestDto) {
         requestDto.setUserDefined(true);
+        requestDto.setDifficulty(0);
         ProblemResponseDto createdProblem = problemService.createUserProblem(requestDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdProblem);
     }
@@ -66,6 +67,7 @@ public class ProblemController {
             @RequestBody ProblemRequestDto requestDto
     ) {
         requestDto.setUserDefined(true);
+        requestDto.setDifficulty(0);
         ProblemResponseDto updatedProblem = problemService.updateUserProblem(problemId, requestDto);
         return ResponseEntity.ok(updatedProblem);
     }

@@ -1,22 +1,26 @@
 package com.seoultech.codemos.service;
 
+import com.seoultech.codemos.dto.JudgeResultResponseDTO;
 import com.seoultech.codemos.dto.ProblemMetadataDto;
 import com.seoultech.codemos.dto.ProblemRequestDto;
 import com.seoultech.codemos.dto.ProblemResponseDto;
 import com.seoultech.codemos.model.Problem;
+import com.seoultech.codemos.model.ProblemRanking;
 import com.seoultech.codemos.model.UserEntity;
+import com.seoultech.codemos.repository.ProblemRankingRepository;
 import com.seoultech.codemos.repository.ProblemRepository;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
 public class ProblemService {
     private final ProblemRepository problemRepository;
+    private final ProblemRankingRepository problemRankingRepository;
     private final AuthService authService;
     public static final int USER_PROBLEM_START_NUMBER = 10000;
 
@@ -101,6 +105,12 @@ public class ProblemService {
             problem.setProblemNumber(requestDto.getProblemNumber());
         }
 
+        if (requestDto.getDifficulty() != null) {
+            problem.setDifficulty(requestDto.getDifficulty());
+        } else {
+            problem.setDifficulty(0);
+        }
+
         Problem savedProblem = problemRepository.save(problem);
         return mapToProblemResponse(savedProblem);
     }
@@ -134,11 +144,31 @@ public class ProblemService {
         }
     }
 
-    public void updateProblemRanking(Integer problemId, String code) {
+    public void updateProblemRanking(Integer problemId, String code, JudgeResultResponseDTO judgeResult) {
         UserEntity user = authService.getCurrentUser();
-        String userId = user.getNickname();
 
-        // ProblemRanking 도큐먼트 업데이트 로직 구현
+        ProblemRanking problemRanking = problemRankingRepository.findByProblemIdAndUserId(problemId.toString(), user.getId().toString())
+                .orElse(new ProblemRanking());
+
+        Integer codeByteSize = calculateCodeByteSize(code);
+
+        problemRanking.setProblemId(problemId.toString());
+        problemRanking.setUserId(user.getId().toString());
+        problemRanking.setScore(judgeResult.getScore());
+        problemRanking.setFuel(judgeResult.getFuel());
+        problemRanking.setTime(judgeResult.getTime());
+        problemRanking.setCodeByteSize(codeByteSize);
+
+        problemRankingRepository.save(problemRanking);
+    }
+
+    private Integer calculateCodeByteSize(String code) {
+        if (code == null) {
+            return 0;
+        }
+
+        byte[] bytes = code.getBytes(StandardCharsets.UTF_8);
+        return bytes.length;
     }
 
     private void updateProblemFields(Problem problem, ProblemRequestDto requestDto) {

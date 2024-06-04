@@ -4,12 +4,17 @@ import com.seoultech.codemos.config.SecurityUtil;
 import com.seoultech.codemos.dto.MypageResponseDTO;
 import com.seoultech.codemos.dto.UserResponseDTO;
 import com.seoultech.codemos.model.LeaderBoardEntity;
+import com.seoultech.codemos.model.Problem;
 import com.seoultech.codemos.model.RankingEntity;
 import com.seoultech.codemos.model.UserEntity;
 import com.seoultech.codemos.repository.LeaderBoardRepository;
+import com.seoultech.codemos.repository.ProblemRepository;
 import com.seoultech.codemos.repository.RankingRepository;
 import com.seoultech.codemos.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
+import java.util.HashMap;
+import java.util.Map;
+import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,12 +29,9 @@ import java.util.stream.Collectors;
 @Transactional(readOnly = true)
 public class UserService {
     private final UserRepository userRepository;
-    @Autowired
-    private LeaderBoardRepository leaderBoardRepository;
-
-    @Autowired
-    private RankingRepository rankingRepository;
-
+    private final ProblemRepository problemRepository;
+    private final LeaderBoardRepository leaderBoardRepository;
+    private final RankingRepository rankingRepository;
     public UserResponseDTO getMyInfoBySecurity() {
         return userRepository.findById(SecurityUtil.getCurrentMemberId())
                 .map(UserResponseDTO::of)
@@ -69,8 +71,6 @@ public class UserService {
         );
     }
 
-
-
     @Transactional(readOnly = false)
     public RankingEntity copyLeaderBoardToRanking(int id) {
         Optional<LeaderBoardEntity> leaderBoard = leaderBoardRepository.findById(id);
@@ -104,20 +104,45 @@ public class UserService {
 
         if (!user.getSolvedProblems().contains(problemId.toString())) {
             user.getSolvedProblems().add(problemId.toString());
+
+            Problem problem = problemRepository.findByProblemNumber(problemId)
+                    .orElseThrow(() -> new IllegalArgumentException("not found: " + problemId));
+            Integer difficulty = problem.getDifficulty();
+
             user.setExperience(user.getExperience() + calculateExperiencePoints(problemId));
             user.setLevel(calculateLevel(user.getExperience()));
             userRepository.save(user);
         }
     }
 
-    private Integer calculateExperiencePoints(Integer problemId) {
-        // 문제 난이도에 따른 경험치 계산 로직 구현
-        return 0;
+    private Integer calculateExperiencePoints(Integer difficulty) {
+        return difficulty * 1_000;
     }
 
     private Integer calculateLevel(Integer experience) {
-        // 경험치에 따른 레벨 계산 로직 구현
-        return 0;
+        int level = 0;
+        int requiredExperience = 1_000;
+        int prevRequiredExperience = 0;
+
+        while (experience >= requiredExperience) {
+            level++;
+            int temp = requiredExperience;
+            requiredExperience += prevRequiredExperience;
+            prevRequiredExperience = temp;
+        }
+
+        return level;
     }
 
+    public Map<String, Object> getUserProfileByNickname(String nickname) {
+        UserEntity user = userRepository.findByNickname(nickname)
+                .orElseThrow(() -> new EntityNotFoundException("못찾겠다꾀꼬리"));
+
+        Map<String, Object> profileData = new HashMap<>();
+        profileData.put("profilePicUrl", user.getProfilePicURL());
+        profileData.put("level", user.getLevel());
+        profileData.put("experience", user.getExperience());
+
+        return profileData;
+    }
 }
