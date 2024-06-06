@@ -23,6 +23,7 @@ public class ProblemRequestDto {
     private double initialAngle;
     private double initialVelocityX;
     private double initialVelocityY;
+    private double rotationVelocity;
     private List<String> restrictedMethods;
     private boolean isUserDefined;
     private List<String> tags;
