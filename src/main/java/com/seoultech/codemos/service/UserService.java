@@ -142,6 +142,7 @@ public class UserService {
         profileData.put("profilePicUrl", user.getProfilePicURL());
         profileData.put("level", user.getLevel());
         profileData.put("experience", user.getExperience());
+        profileData.put("solvedProblems", user.getSolvedProblems());
 
         return profileData;
     }
