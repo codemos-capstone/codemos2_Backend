@@ -50,6 +50,11 @@ public class ProblemService {
                 .id(problem.getId())
                 .problemNumber(problem.getProblemNumber())
                 .title(problem.getTitle())
+                .description(problem.getDescription())
+                .difficulty(problem.getDifficulty())
+                .isUserDefined(problem.isUserDefined())
+                .userId(problem.getUserId())
+                .tags(problem.getTags())
                 .build();
     }
 
@@ -199,6 +204,7 @@ public class ProblemService {
                 .restrictedMethods(requestDto.getRestrictedMethods())
                 .isUserDefined(requestDto.isUserDefined())
                 .solvedUsers(new ArrayList<>())
+                .tags(requestDto.getTags())
                 .build();
     }
 
@@ -218,6 +224,8 @@ public class ProblemService {
                 .restrictedMethods(problem.getRestrictedMethods())
                 .isUserDefined(problem.isUserDefined())
                 .solvedUsers(problem.getSolvedUsers())
+                .userId(problem.getUserId())
+                .tags(problem.getTags())
                 .build();
     }
 }

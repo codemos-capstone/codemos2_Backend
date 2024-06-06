@@ -30,4 +30,5 @@ public class Problem {
     private boolean isUserDefined;
     private String userId;
     private List<String> solvedUsers;
+    private List<String> tags;
 }

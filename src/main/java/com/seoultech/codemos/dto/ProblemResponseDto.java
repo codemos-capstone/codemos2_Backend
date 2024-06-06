@@ -26,5 +26,7 @@ public class ProblemResponseDto {
     private double initialVelocityY;
     private List<String> restrictedMethods;
     private boolean isUserDefined;
+    private String userId;
     private List<String> solvedUsers;
+    private List<String> tags;
 }

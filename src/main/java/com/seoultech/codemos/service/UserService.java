@@ -109,7 +109,7 @@ public class UserService {
                     .orElseThrow(() -> new IllegalArgumentException("not found: " + problemId));
             Integer difficulty = problem.getDifficulty();
 
-            user.setExperience(user.getExperience() + calculateExperiencePoints(problemId));
+            user.setExperience(user.getExperience() + calculateExperiencePoints(difficulty));
             user.setLevel(calculateLevel(user.getExperience()));
             userRepository.save(user);
         }

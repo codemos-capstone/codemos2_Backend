@@ -25,4 +25,5 @@ public class ProblemRequestDto {
     private double initialVelocityY;
     private List<String> restrictedMethods;
     private boolean isUserDefined;
+    private List<String> tags;
 }
