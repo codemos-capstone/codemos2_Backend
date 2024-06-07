@@ -29,10 +29,11 @@ public class UserController {
     private final LeaderBoardRepository leaderBoardRepository;
 
     @GetMapping("/me")
-    public ResponseEntity<UserResponseDTO> getMyMemberInfo() {
+    public ResponseEntity<Map<String, Object>> getMyMemberInfo() {
         UserResponseDTO myInfoBySecurity = userService.getMyInfoBySecurity();
-        System.out.println(myInfoBySecurity.getNickname());
-        return ResponseEntity.ok((myInfoBySecurity));
+        String nickname = myInfoBySecurity.getNickname();
+        Map<String, Object> profileData = userService.getUserProfileByNickname(nickname);
+        return ResponseEntity.ok(profileData);
         // return ResponseEntity.ok(memberService.getMyInfoBySecurity());
     }
 

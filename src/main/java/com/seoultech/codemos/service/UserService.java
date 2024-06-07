@@ -143,6 +143,7 @@ public class UserService {
         profileData.put("level", user.getLevel());
         profileData.put("experience", user.getExperience());
         profileData.put("solvedProblems", user.getSolvedProblems());
+        profileData.put("nickname", user.getNickname());
 
         return profileData;
     }
