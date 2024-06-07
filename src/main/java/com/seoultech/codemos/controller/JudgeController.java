@@ -2,6 +2,7 @@ package com.seoultech.codemos.controller;
 
 import com.seoultech.codemos.dto.JudgeCodeDTO;
 import com.seoultech.codemos.dto.JudgeResultResponseDTO;
+import com.seoultech.codemos.dto.ProblemResponseDto;
 import com.seoultech.codemos.jwt.TokenProvider;
 import com.seoultech.codemos.service.JudgeService;
 import com.seoultech.codemos.service.ProblemService;
@@ -27,7 +28,9 @@ public class JudgeController {
     @PostMapping("problem/{problemId}/score")
     public ResponseEntity<JudgeResultResponseDTO> execute(@PathVariable Integer problemId, @RequestBody JudgeCodeDTO requestDto) {//,
 
-        JudgeResultResponseDTO responseDTO = judgeService.judgeCode(problemId, requestDto.getCode());
+        ProblemResponseDto problem = problemService.getProblemDetails(problemId);
+
+        JudgeResultResponseDTO responseDTO = judgeService.judgeCode(problem, requestDto.getCode());
 
         if (responseDTO != null && responseDTO.getScore() > 0) {
             userService.updateSolvedProblem(problemId);
