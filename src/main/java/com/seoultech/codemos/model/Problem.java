@@ -26,8 +26,10 @@ public class Problem {
     private double initialAngle;
     private double initialVelocityX;
     private double initialVelocityY;
+    private double rotationVelocity;
     private List<String> restrictedMethods;
     private boolean isUserDefined;
     private String userId;
     private List<String> solvedUsers;
+    private List<String> tags;
 }

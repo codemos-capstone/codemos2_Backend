@@ -50,6 +50,11 @@ public class ProblemService {
                 .id(problem.getId())
                 .problemNumber(problem.getProblemNumber())
                 .title(problem.getTitle())
+                .description(problem.getDescription())
+                .difficulty(problem.getDifficulty())
+                .isUserDefined(problem.isUserDefined())
+                .userId(problem.getUserId())
+                .tags(problem.getTags())
                 .build();
     }
 
@@ -181,6 +186,7 @@ public class ProblemService {
         problem.setInitialAngle(requestDto.getInitialAngle());
         problem.setInitialVelocityX(requestDto.getInitialVelocityX());
         problem.setInitialVelocityY(requestDto.getInitialVelocityY());
+        problem.setRotationVelocity(requestDto.getRotationVelocity());
         problem.setRestrictedMethods(requestDto.getRestrictedMethods());
     }
 
@@ -196,9 +202,11 @@ public class ProblemService {
                 .initialAngle(requestDto.getInitialAngle())
                 .initialVelocityX(requestDto.getInitialVelocityX())
                 .initialVelocityY(requestDto.getInitialVelocityY())
+                .rotationVelocity(requestDto.getRotationVelocity())
                 .restrictedMethods(requestDto.getRestrictedMethods())
                 .isUserDefined(requestDto.isUserDefined())
                 .solvedUsers(new ArrayList<>())
+                .tags(requestDto.getTags())
                 .build();
     }
 
@@ -215,9 +223,12 @@ public class ProblemService {
                 .initialAngle(problem.getInitialAngle())
                 .initialVelocityX(problem.getInitialVelocityX())
                 .initialVelocityY(problem.getInitialVelocityY())
+                .rotationVelocity(problem.getRotationVelocity())
                 .restrictedMethods(problem.getRestrictedMethods())
                 .isUserDefined(problem.isUserDefined())
                 .solvedUsers(problem.getSolvedUsers())
+                .userId(problem.getUserId())
+                .tags(problem.getTags())
                 .build();
     }
 }

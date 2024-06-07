@@ -3,8 +3,10 @@ package com.seoultech.codemos.controller;
 import com.seoultech.codemos.dto.CodeFileRequestDto;
 import com.seoultech.codemos.dto.CodeFileResponseDto;
 import com.seoultech.codemos.dto.JudgeResultResponseDTO;
+import com.seoultech.codemos.dto.ProblemResponseDto;
 import com.seoultech.codemos.service.CodeFileService;
 import com.seoultech.codemos.service.JudgeService;
+import com.seoultech.codemos.service.ProblemService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -28,6 +30,8 @@ public class CodeFileController {
 
     private final CodeFileService codeFileService;
     private final JudgeService judgeService;
+    private final ProblemService problemService;
+
 
     @PostMapping
     @PreAuthorize("hasAuthority('OAUTH2_USER') or hasAuthority('ROLE_USER')")
@@ -78,7 +82,8 @@ public class CodeFileController {
         CodeFileResponseDto codeFileResponseDto = codeFileService.getCodeFileDetails(fileId);
         String code = codeFileResponseDto.getContent();
 
-        JudgeResultResponseDTO judgeResult = judgeService.judgeCode(problemId, code);
+        ProblemResponseDto problem = problemService.getProblemDetails(problemId);
+        JudgeResultResponseDTO judgeResult = judgeService.judgeCode(problem, code);
 
         if (judgeResult != null) {
             return ResponseEntity.ok(judgeResult);

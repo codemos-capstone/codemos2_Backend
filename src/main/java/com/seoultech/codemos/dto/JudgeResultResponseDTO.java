@@ -10,4 +10,8 @@ public class JudgeResultResponseDTO {
     float score;
     float fuel;
     int time;
+    int bytes;
+    float angle;
+    float velX;
+    float velY;
 }

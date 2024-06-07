@@ -109,7 +109,7 @@ public class UserService {
                     .orElseThrow(() -> new IllegalArgumentException("not found: " + problemId));
             Integer difficulty = problem.getDifficulty();
 
-            user.setExperience(user.getExperience() + calculateExperiencePoints(problemId));
+            user.setExperience(user.getExperience() + calculateExperiencePoints(difficulty));
             user.setLevel(calculateLevel(user.getExperience()));
             userRepository.save(user);
         }
@@ -142,6 +142,8 @@ public class UserService {
         profileData.put("profilePicUrl", user.getProfilePicURL());
         profileData.put("level", user.getLevel());
         profileData.put("experience", user.getExperience());
+        profileData.put("solvedProblems", user.getSolvedProblems());
+        profileData.put("nickname", user.getNickname());
 
         return profileData;
     }
