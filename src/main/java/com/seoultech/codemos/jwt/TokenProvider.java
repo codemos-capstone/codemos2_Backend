@@ -27,6 +27,7 @@ public class TokenProvider {
     private static final long ACCESS_TOKEN_EXPIRE_TIME = 1000 * 60 * 60;    //1시간
     private final Key key;
     private static final long RESET_PASSWORD_TOKEN_EXPIRE_TIME = 3600_000; // 1시간
+    private static final long REFRESH_TOKEN_EXPIRE_TIME = 604800000; // 7일
 
     @Value("${security.jwt.reset-password-token-key}")
     String resetPasswordTokenKey;
@@ -52,17 +53,17 @@ public class TokenProvider {
 
         long now = (new Date()).getTime();
         Date tokenExpiresIn = new Date(now + ACCESS_TOKEN_EXPIRE_TIME);
-
+        Date refreshTokenExpiresIn = new Date(now + REFRESH_TOKEN_EXPIRE_TIME);
 
 
         String subject;
         if (authentication instanceof OAuth2AuthenticationToken) {
-            // OAuth2AuthenticationToken의 경우, 이름을 얻기
             OAuth2AuthenticationToken oauthToken = (OAuth2AuthenticationToken) authentication;
             System.out.println("oauthToken email: "+ oauthToken.getPrincipal().getAttribute("email"));
             System.out.println("authentication: "+authentication);
             subject = oauthToken.getPrincipal().getAttribute("email"); // 'email' 속성 사용
         } else {
+            System.out.println("authentication Name"+authentication.getName());
             subject = authentication.getName();
         }
 
@@ -73,13 +74,19 @@ public class TokenProvider {
                 .setExpiration(tokenExpiresIn)
                 .signWith(key, SignatureAlgorithm.HS512)
                 .compact();
-        System.out.println("accessToken: "+ accessToken);
+        String refreshToken = Jwts.builder()
+                .setSubject(subject)
+                .setExpiration(refreshTokenExpiresIn)
+                .signWith(key, SignatureAlgorithm.HS512)
+                .compact();
 
         // TokenDto 반환
         return TokenDto.builder()
                 .grantType(BEARER_TYPE)
                 .accessToken(accessToken)
+                .refreshToken(refreshToken)
                 .tokenExpiresIn(tokenExpiresIn.getTime())
+                .refreshTokenExpiresIn(refreshTokenExpiresIn.getTime())
                 .build();
     }
     public String createResetPasswordToken(String email) {

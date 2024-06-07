@@ -17,6 +17,7 @@ import java.util.Map;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,7 +34,7 @@ public class UserService {
     private final LeaderBoardRepository leaderBoardRepository;
     private final RankingRepository rankingRepository;
     public UserResponseDTO getMyInfoBySecurity() {
-        return userRepository.findById(SecurityUtil.getCurrentMemberId())
+        return userRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName())
                 .map(UserResponseDTO::of)
                 .orElseThrow(() -> new RuntimeException("로그인 유저 정보가 없습니다"));
     }
@@ -99,7 +100,7 @@ public class UserService {
 
     @Transactional
     public void updateSolvedProblem(Integer problemId) {
-        UserEntity user = userRepository.findById(SecurityUtil.getCurrentMemberId())
+        UserEntity user = userRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName())
                 .orElseThrow(() -> new RuntimeException("로그인 유저 정보가 없습니다"));
 
         if (!user.getSolvedProblems().contains(problemId.toString())) {

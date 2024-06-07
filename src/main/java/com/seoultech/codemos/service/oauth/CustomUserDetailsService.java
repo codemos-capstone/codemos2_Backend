@@ -33,7 +33,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     private UserDetails createUserDetails(UserEntity userEntity) {
         GrantedAuthority grantedAuthority = new SimpleGrantedAuthority(userEntity.getAuthority().toString());
         return new User(
-                String.valueOf(userEntity.getId()),
+                String.valueOf(userEntity.getEmail()),
                 userEntity.getPassword(),
                 Collections.singleton(grantedAuthority)
         );
