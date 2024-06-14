@@ -1,0 +1,42 @@
+name: Deploy to Raspberry Pi
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up JDK 17
+      uses: actions/setup-java@v2
+      with:
+        java-version: '17'
+
+    - name: Build with Gradle
+      run: ./gradlew build
+
+    - name: Transfer files via SSH
+      uses: appleboy/scp-action@v0.0.9
+      with:
+        host: ${{ secrets.RPI_HOST }}
+        username: ${{ secrets.RPI_USER }}
+        password: ${{ secrets.RPI_PASSWORD }}
+        source: "build/libs/*.jar"
+        target: "/home/${{ secrets.RPI_USER }}/app/"
+
+    - name: Restart application on Raspberry Pi
+      uses: appleboy/ssh-action@v0.1.7
+      with:
+        host: ${{ secrets.RPI_HOST }}
+        username: ${{ secrets.RPI_USER }}
+        password: ${{ secrets.RPI_PASSWORD }}
+        script: |
+          sudo systemctl stop myapp.service
+          sudo cp /home/${{ secrets.RPI_USER }}/app/*.jar /home/${{ secrets.RPI_USER }}/app/app.jar
+          sudo systemctl start myapp.service
