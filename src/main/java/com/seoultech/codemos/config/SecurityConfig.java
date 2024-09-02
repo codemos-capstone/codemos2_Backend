@@ -60,8 +60,8 @@ public class SecurityConfig {
                         .requestMatchers("/auth/sign").permitAll()
                         .requestMatchers("/auth/login").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/problems/**").permitAll()
-//                        .requestMatchers("/api/v1/code-file/**").permitAll()
-//                        .requestMatchers("/api/v1/judge/**").permitAll()
+                        .requestMatchers("/api/v1/code-file/**").permitAll()
+                        .requestMatchers("/api/v1/judge/**").permitAll()
                         .anyRequest().authenticated()
         );
 

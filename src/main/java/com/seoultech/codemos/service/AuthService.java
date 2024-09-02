@@ -10,9 +10,12 @@ import com.seoultech.codemos.jwt.TokenProvider;
 import com.seoultech.codemos.model.UserEntity;
 import com.seoultech.codemos.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -62,10 +65,15 @@ public class AuthService {
     }
 
     public TokenDto login(LoginRequestDTO requestDto) {
-        UsernamePasswordAuthenticationToken authenticationToken = requestDto.toAuthentication();
-        Authentication authentication = managerBuilder.getObject().authenticate(authenticationToken);
-        return tokenProvider.generateTokenDto(authentication);
+        try {
+            UsernamePasswordAuthenticationToken authenticationToken = requestDto.toAuthentication();
+            Authentication authentication = managerBuilder.getObject().authenticate(authenticationToken);
+            return tokenProvider.generateTokenDto(authentication);
+        } catch (AuthenticationException e) {
+            return null;
+        }
     }
+
     public Authentication getAuthentication(String email) {
         return new UsernamePasswordAuthenticationToken(email, null);
     }
