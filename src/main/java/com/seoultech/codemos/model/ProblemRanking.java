@@ -22,6 +22,8 @@ public class ProblemRanking {
     private Integer time;
     private Integer codeByteSize;
 
+    private String code;
+
     @Builder
     public ProblemRanking(String id, String problemId, String userId, Float score, Integer codeByteSize) {
         this.id = id;

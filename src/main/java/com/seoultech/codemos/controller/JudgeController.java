@@ -35,7 +35,6 @@ public class JudgeController {
         if (responseDTO != null && responseDTO.getScore() > 0) {
             userService.updateSolvedProblem(problemId);
             problemService.updateSolvedUsers(problemId);
-
             problemService.updateProblemRanking(problemId, requestDto.getCode(), responseDTO);
         }
 

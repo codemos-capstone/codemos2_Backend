@@ -25,7 +25,6 @@ public class ProblemController {
 
     private final ProblemService problemService;
 
-    // 로그인 안해도 조회 가능??
     @GetMapping("/problems")
     public ResponseEntity<List<ProblemMetadataDto>> getProblemList() {
         List<ProblemMetadataDto> problemList = problemService.getProblemList();
