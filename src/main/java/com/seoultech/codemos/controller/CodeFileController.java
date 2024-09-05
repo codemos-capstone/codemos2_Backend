@@ -49,7 +49,7 @@ public class CodeFileController {
     }
 
     @GetMapping("/problem/{problemId}")
-    @PreAuthorize("hasAuthority('OAUTH2_USER') or hasAuthority('ROLE_USER')")
+    //@PreAuthorize("hasAuthority('OAUTH2_USER') or hasAuthority('ROLE_USER')")
     public ResponseEntity<List<CodeFileResponseDto>> getProblemCodeFileList(@PathVariable Integer problemId) {
         List<CodeFileResponseDto> responseDtoList = codeFileService.getProblemCodeFileList(problemId);
         return ResponseEntity.ok(responseDtoList);

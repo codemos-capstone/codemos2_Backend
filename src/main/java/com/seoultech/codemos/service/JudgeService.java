@@ -17,7 +17,7 @@ import org.springframework.web.client.RestTemplate;
 public class JudgeService {
 
     private final RestTemplate restTemplate;
-    private static final String url = "https://distinctive-odele-codemos.koyeb.app/score";
+    private static final String url = "http://yhcho.ddns.net:3000/score";
 //    private static final String url = "http://localhost:3001/score";
 
     public JudgeResultResponseDTO judgeCode(ProblemResponseDto problem, String code) {

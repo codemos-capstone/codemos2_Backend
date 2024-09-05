@@ -156,13 +156,13 @@ public class ProblemService {
                 .orElse(new ProblemRanking());
 
         Integer codeByteSize = calculateCodeByteSize(code);
-
         problemRanking.setProblemId(problemId.toString());
-        problemRanking.setUserId(user.getId().toString());
+        problemRanking.setUserId(user.getEmail());
         problemRanking.setScore(judgeResult.getScore());
         problemRanking.setFuel(judgeResult.getFuel());
         problemRanking.setTime(judgeResult.getTime());
         problemRanking.setCodeByteSize(codeByteSize);
+        problemRanking.setCode(code);
 
         problemRankingRepository.save(problemRanking);
     }
