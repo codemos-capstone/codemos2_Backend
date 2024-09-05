@@ -26,14 +26,20 @@ public class TokenProvider {
     private static final String BEARER_TYPE = "bearer";
     private static final long ACCESS_TOKEN_EXPIRE_TIME = 1000 * 60 * 60;    //1시간
     private final Key key;
+    private final Key refreshKey;
     private static final long RESET_PASSWORD_TOKEN_EXPIRE_TIME = 3600_000; // 1시간
     private static final long REFRESH_TOKEN_EXPIRE_TIME = 604800000; // 7일
 
     @Value("${security.jwt.reset-password-token-key}")
     String resetPasswordTokenKey;
-    public TokenProvider(@Value("${jwt.secret}") String secretKey) {
+
+
+
+    public TokenProvider(@Value("${jwt.secret}") String secretKey, @Value("${jwt.refresh.secret}")String refreshSecretKey) {
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
+        byte[] refreshKeyBytes = Decoders.BASE64.decode(refreshSecretKey);
         this.key = Keys.hmacShaKeyFor(keyBytes);
+        this.refreshKey = Keys.hmacShaKeyFor(refreshKeyBytes);
     }
 
     public void expireToken(String token) {
@@ -77,7 +83,7 @@ public class TokenProvider {
         String refreshToken = Jwts.builder()
                 .setSubject(subject)
                 .setExpiration(refreshTokenExpiresIn)
-                .signWith(key, SignatureAlgorithm.HS512)
+                .signWith(refreshKey, SignatureAlgorithm.HS512)
                 .compact();
 
         // TokenDto 반환
