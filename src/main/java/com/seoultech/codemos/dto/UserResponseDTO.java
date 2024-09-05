@@ -14,12 +14,14 @@ import lombok.NoArgsConstructor;
 public class UserResponseDTO {
     private String email;
     private String nickname;
+    private String profilePicURL;
     private boolean state;
 
     public static UserResponseDTO of(UserEntity user) {
         return UserResponseDTO.builder()
                 .email(user.getEmail())
                 .nickname(user.getNickname())
+                .profilePicURL(user.getProfilePicURL())
                 .build();
     }
 }
