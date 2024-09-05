@@ -43,9 +43,24 @@ public class UserController {
         return ResponseEntity.ok(profileData);
     }
 
-    @PostMapping("/nickname")
-    public ResponseEntity<UserResponseDTO> setMemberNickname(@RequestBody UserRequestDTO request) {
-        return ResponseEntity.ok(userService.changeMemberNickname(request.getEmail(), request.getNickname()));
+    @PutMapping("/nickname")
+    public ResponseEntity<UserResponseDTO> changeMemberNickname(@RequestBody UserRequestDTO request) {
+        try {
+            UserResponseDTO response = userService.changeMemberNickname(request.getEmail(), request.getNickname());
+            return ResponseEntity.ok(response);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(null);
+        }
+    }
+
+    @PutMapping("/profile-picture")
+    public ResponseEntity<UserResponseDTO> changeProfilePicture(@RequestBody UserRequestDTO request) {
+        try {
+            UserResponseDTO response = userService.changeProfilePicture(request.getEmail(), request.getProfilePicURL());
+            return ResponseEntity.ok(response);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(null);
+        }
     }
 
     @GetMapping("/mypage")

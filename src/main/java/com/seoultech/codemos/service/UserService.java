@@ -40,10 +40,26 @@ public class UserService {
     }
     @Transactional
     public UserResponseDTO changeMemberNickname(String email, String nickname) {
-        UserEntity user = userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("로그인 유저 정보가 없습니다"));
+        UserEntity user = userRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        if (userRepository.existsByNickname(nickname)) {
+            throw new RuntimeException("Nickname already exists");
+        }
+
         user.setNickname(nickname);
         return UserResponseDTO.of(userRepository.save(user));
     }
+
+    @Transactional
+    public UserResponseDTO changeProfilePicture(String email, String profilePicURL) {
+        UserEntity user = userRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        user.setProfilePicURL(profilePicURL);
+        return UserResponseDTO.of(userRepository.save(user));
+    }
+
     public UserEntity getLoginUserByLoginId(String userIndex) {
         Long id = Long.parseLong(userIndex); // String을 Long으로 변환
         return userRepository.findById(id)
